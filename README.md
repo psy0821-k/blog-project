@@ -44,17 +44,20 @@
 - React
 - TypeScript
 - TanStack Query
+- Tailwind CSS
 - Zod
 
 ### Backend
 
 - Next.js API
 - PostgreSQL
-- ORM — 추후 결정
+- Prisma
+- Sharp
 
 ### Testing
 
 - Playwright
+- Vitest
 
 ### Tools
 
