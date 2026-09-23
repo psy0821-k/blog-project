@@ -6,7 +6,10 @@ import Google from 'next-auth/providers/google'
 // Edge 런타임(middleware)에서도 로드되는 설정.
 // PrismaAdapter 자체는 Node 런타임에서만 동작하는 auth.ts에서 주입한다.
 export default {
-  providers: [Google, GitHub],
+  providers: [
+    Google({ allowDangerousEmailAccountLinking: true }),
+    GitHub({ allowDangerousEmailAccountLinking: true }),
+  ],
   pages: {
     signIn: '/login',
   },
