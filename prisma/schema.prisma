@@ -7,56 +7,55 @@ datasource db {
   provider = "postgresql"
 }
 
+/// 사용자 권한
 enum Role {
+  /// 일반 사용자
   USER
+  /// 관리자
   ADMIN
 }
 
+/// 게시글 종류
 enum PostType {
+  /// 프로젝트 소개글
   PROJECT
+  /// 실험/학습 기록
   LAB
+  /// 개발 일지
   DEV_LOG
 }
 
+/// 미디어 파일 종류. URL만으로는 이미지/동영상을 안정적으로 구분할 수 없어(확장자 없는 CDN URL 등)
+/// 렌더링 분기(img/video 태그)와 업로드 처리
+/// 파이프라인 분기(이미지 전용 Sharp 처리)를 위해 명시적으로 저장한다.
 enum MediaType {
+  /// 이미지
   IMAGE
+  /// 동영상
   VIDEO
 }
 
 model User {
-  id            String    @id @default(cuid())
-  email         String    @unique
-  emailVerified DateTime?
-  name          String?
-  image         String?
-  role          Role      @default(USER)
-
-  username String? @unique
-  bio      String?
-  website  String?
-
-  isActive    Boolean   @default(true)
-  lastLoginAt DateTime?
+  id    String  @id @default(uuid())
+  email String  @unique
+  name  String?
+  role  Role    @default(USER)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   accounts   Account[]
-  sessions   Session[]
   posts      Post[]
   bookmarks  Bookmark[]
   siteVisits SiteVisit[]
 }
 
-// NextAuth(Auth.js) OAuth 연동 정보 (Google 등 provider별 계정 매핑)
 model Account {
-  id                String  @id @default(cuid())
+  id                String  @id @default(uuid())
   userId            String
-  type              String
   provider          String
   providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
+  type              String
   expires_at        Int?
   token_type        String?
   scope             String?
@@ -68,61 +67,55 @@ model Account {
   @@unique([provider, providerAccountId])
 }
 
-// NextAuth(Auth.js) 세션
-model Session {
-  id           String   @id @default(cuid())
-  sessionToken String   @unique
-  userId       String
-  expires      DateTime
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  // 비밀번호 변경 시 특정 유저의 전체 세션 무효화 등에 사용
-  @@index([userId])
-}
-
-// Auth.js 표준 모델. 이 프로젝트는 OAuth(Google/GitHub)만 사용하지만
-// PrismaAdapter가 내부적으로 참조할 수 있어 유지
-model VerificationToken {
-  identifier String
-  token      String   @unique
-  expires    DateTime
-
-  @@unique([identifier, token])
-}
-
 model Post {
-  id           String   @id @default(cuid())
+  id           String   @id @default(uuid())
   type         PostType
   title        String
   slug         String   @unique
   thumbnailUrl String?
   content      String
-  published    Boolean  @default(false)
-  viewCount    Int      @default(0)
 
+  // 임시 저장 시에 사용
+  published       Boolean @default(false)
+  viewCount       Int     @default(0)
   metaTitle       String?
   metaDescription String?
-
-  authorId String
-  author   User   @relation(fields: [authorId], references: [id])
+  authorId        String
+  author          User    @relation(fields: [authorId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  media     Media[]
-  bookmarks Bookmark[]
-  tags      PostTag[]
+  // PROJECT 글일 때: 이 프로젝트에 속한 제작과정(DEV_LOG) 글들
+  devLogs   Post[]  @relation("ProjectDevLogs")
+  // DEV_LOG 글일 때: 이 글이 속한 프로젝트
+  projectId String?
+  project   Post?   @relation("ProjectDevLogs", fields: [projectId], references: [id])
 
-  relatedTo   PostRelation[] @relation("ProjectRelations")
-  relatedFrom PostRelation[] @relation("DevLogRelations")
+  media     Media[]
+  postTags  PostTag[]
+  bookmarks Bookmark[]
 
   @@index([type, published])
   @@index([authorId])
+  @@index([projectId])
+}
+
+model Media {
+  id   String    @id @default(uuid())
+  url  String
+  type MediaType
+
+  postId String
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([postId])
 }
 
 model Tag {
-  id   String @id @default(cuid())
+  id   String @id @default(uuid())
   name String @unique
   slug String @unique
 
@@ -140,39 +133,8 @@ model PostTag {
   @@index([tagId])
 }
 
-// 프로젝트(PROJECT) ↔ 공부글(DEV_LOG) 연결. 다대다(하나의 프로젝트에 여러 공부글,
-// 하나의 공부글이 여러 프로젝트에 연결 가능)
-model PostRelation {
-  id String @id @default(cuid())
-
-  projectId String
-  devLogId  String
-
-  project Post @relation("ProjectRelations", fields: [projectId], references: [id], onDelete: Cascade)
-  devLog  Post @relation("DevLogRelations", fields: [devLogId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-
-  @@unique([projectId, devLogId])
-  @@index([devLogId])
-}
-
-model Media {
-  id    String    @id @default(cuid())
-  url   String
-  type  MediaType
-  order Int       @default(0)
-
-  postId String
-  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-
-  @@index([postId, order])
-}
-
 model Bookmark {
-  id String @id @default(cuid())
+  id String @id @default(uuid())
 
   userId String
   postId String
@@ -187,8 +149,7 @@ model Bookmark {
 }
 
 model SiteVisit {
-  id String @id @default(cuid())
-
+  id     String  @id @default(uuid())
   path   String
   userId String?
   user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)

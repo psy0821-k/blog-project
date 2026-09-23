@@ -43,3 +43,7 @@ next-env.d.ts
 
 # prisma
 /src/generated/prisma
+
+# 개인 작업용 문서 (git 관리 제외)
+/docs/roadmap.md
+/docs/diagrams/

@@ -1,4 +1,5 @@
-import type { NextAuthConfig } from 'next-auth'
+import type { NextAuthConfig, Session } from 'next-auth'
+import type { JWT } from 'next-auth/jwt'
 import GitHub from 'next-auth/providers/github'
 import Google from 'next-auth/providers/google'
 
@@ -10,13 +11,20 @@ export default {
     signIn: '/login',
   },
   session: {
-    strategy: 'database',
+    strategy: 'jwt',
   },
   callbacks: {
-    session({ session, user }) {
+    jwt({ token, user }) {
+      if (user) {
+        token.id = user.id
+        token.role = user.role
+      }
+      return token
+    },
+    session({ session, token }: { session: Session; token: JWT }) {
       if (session.user) {
-        session.user.id = user.id
-        session.user.role = user.role
+        session.user.id = token.id
+        session.user.role = token.role
       }
       return session
     },
