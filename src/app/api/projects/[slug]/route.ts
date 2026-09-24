@@ -4,7 +4,7 @@ import { requireAdminSession } from '@/lib/api-auth'
 import { forbiddenResponse, invalidJsonResponse, notFoundResponse, validationErrorResponse } from '@/lib/api-response'
 import { inferMediaType } from '@/lib/media'
 import { getPublishedPostBySlug } from '@/lib/post-detail'
-import { prisma } from '@/lib/prisma'
+import { isRecordNotFoundError, prisma } from '@/lib/prisma'
 
 const updateProjectSchema = z.object({
   title: z.string().trim().min(1).optional(),
@@ -63,30 +63,39 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
 
   const { mediaUrls, ...postData } = parsed.data
 
-  const project = await prisma.$transaction(async (tx) => {
-    const updated = await tx.post.update({
-      where: { id: existing.id },
-      data: postData,
+  try {
+    const project = await prisma.$transaction(async (tx) => {
+      const updated = await tx.post.update({
+        where: { id: existing.id },
+        data: postData,
+      })
+
+      if (mediaUrls !== undefined) {
+        await tx.media.deleteMany({ where: { postId: existing.id } })
+
+        if (mediaUrls.length) {
+          await tx.media.createMany({
+            data: mediaUrls.map((url) => ({
+              postId: existing.id,
+              url,
+              type: inferMediaType(url),
+            })),
+          })
+        }
+      }
+
+      return updated
     })
 
-    if (mediaUrls !== undefined) {
-      await tx.media.deleteMany({ where: { postId: existing.id } })
-
-      if (mediaUrls.length) {
-        await tx.media.createMany({
-          data: mediaUrls.map((url) => ({
-            postId: existing.id,
-            url,
-            type: inferMediaType(url),
-          })),
-        })
-      }
+    return NextResponse.json(project)
+  } catch (error) {
+    // findUnique 이후 update 사이에 다른 요청이 먼저 삭제했을 경우(레이스 컨디션) 404로 변환한다.
+    if (isRecordNotFoundError(error)) {
+      return notFoundResponse()
     }
 
-    return updated
-  })
-
-  return NextResponse.json(project)
+    throw error
+  }
 }
 
 export async function DELETE(_request: NextRequest, { params }: RouteParams) {
@@ -104,7 +113,16 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
     return notFoundResponse()
   }
 
-  await prisma.post.delete({ where: { id: existing.id } })
+  try {
+    await prisma.post.delete({ where: { id: existing.id } })
+  } catch (error) {
+    // findUnique 이후 delete 사이에 다른 요청이 먼저 삭제했을 경우(레이스 컨디션) 404로 변환한다.
+    if (isRecordNotFoundError(error)) {
+      return notFoundResponse()
+    }
+
+    throw error
+  }
 
   return new NextResponse(null, { status: 204 })
 }
