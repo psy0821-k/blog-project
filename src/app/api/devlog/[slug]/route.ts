@@ -1,20 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { z } from 'zod'
 import { requireAdminSession } from '@/lib/api-auth'
 import { forbiddenResponse, invalidJsonResponse, notFoundResponse, validationErrorResponse } from '@/lib/api-response'
 import { inferMediaType } from '@/lib/media'
 import { getPublishedPostBySlug } from '@/lib/post-detail'
+import { updateDevLogSchema } from '@/lib/post-schema'
 import { isRecordNotFoundError, prisma } from '@/lib/prisma'
-
-const updateDevLogSchema = z.object({
-  title: z.string().trim().min(1).optional(),
-  content: z.string().optional(),
-  metaTitle: z.string().trim().optional(),
-  metaDescription: z.string().trim().optional(),
-  published: z.boolean().optional(),
-  // 본문 media 목록 전체 교체. 생략하면 기존 Media를 건드리지 않는다.
-  mediaUrls: z.array(z.string().url()).optional(),
-})
 
 interface RouteParams {
   params: Promise<{ slug: string }>
