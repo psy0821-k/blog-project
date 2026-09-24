@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from 'next/font/google'
 
 import './globals.css'
 import Header from '@/components/common/Header'
+import QueryProvider from '@/components/providers/query-provider'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -26,8 +27,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="ko">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <Header />
-        <main className="content">{children}</main>
+        <QueryProvider>
+          <Header />
+          <main className="content">{children}</main>
+        </QueryProvider>
       </body>
     </html>
   )
