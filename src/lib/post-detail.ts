@@ -15,3 +15,10 @@ export async function getPublishedPostBySlug(type: PostType, slug: string) {
     },
   })
 }
+
+/**
+ * 게시글의 조회수(viewCount)만 1 증가시킨다.
+ */
+export async function incrementPostViewCount(id: string): Promise<void> {
+  await prisma.$executeRaw`UPDATE "Post" SET "viewCount" = "viewCount" + 1 WHERE id = ${id}`
+}

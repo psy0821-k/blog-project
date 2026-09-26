@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { requireAdminSession } from '@/lib/api-auth'
+import { requireAdmin } from '@/lib/api-auth'
 import { forbiddenResponse, invalidJsonResponse, validationErrorResponse } from '@/lib/api-response'
 import { inferMediaType } from '@/lib/media'
 import { getPublishedPostList } from '@/lib/post-list'
@@ -24,9 +24,9 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  const session = await requireAdminSession()
+  const admin = await requireAdmin(request)
 
-  if (!session) {
+  if (!admin) {
     return forbiddenResponse()
   }
 
@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
         metaTitle,
         metaDescription,
         published,
-        authorId: session.user.id,
+        authorId: admin.userId,
       },
     })
 
