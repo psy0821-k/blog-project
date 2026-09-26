@@ -47,3 +47,4 @@ next-env.d.ts
 # 개인 작업용 문서 (git 관리 제외)
 /docs/roadmap.md
 /docs/diagrams/
+/tutorial/
