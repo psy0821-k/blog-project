@@ -48,7 +48,6 @@ model User {
 
   accounts   Account[]
   posts      Post[]
-  bookmarks  Bookmark[]
   siteVisits SiteVisit[]
 }
 
@@ -96,9 +95,8 @@ model Post {
   projectId String?
   project   Post?   @relation("ProjectDevLogs", fields: [projectId], references: [id])
 
-  media     Media[]
-  postTags  PostTag[]
-  bookmarks Bookmark[]
+  media    Media[]
+  postTags PostTag[]
 
   @@index([type, published])
   @@index([authorId])
@@ -135,21 +133,6 @@ model PostTag {
 
   @@id([postId, tagId])
   @@index([tagId])
-}
-
-model Bookmark {
-  id String @id @default(uuid())
-
-  userId String
-  postId String
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-
-  @@unique([userId, postId])
-  @@index([postId])
 }
 
 model SiteVisit {

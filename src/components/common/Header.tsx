@@ -1,10 +1,7 @@
 import { Search } from 'lucide-react'
 import Link from 'next/link'
-import { auth, signOut } from '@/auth'
 
-const Header = async () => {
-  const session = await auth()
-
+const Header = () => {
   return (
     <header className="border border-b-gray-100">
       <div className="content flex justify-between h-15 items-center">
@@ -22,23 +19,6 @@ const Header = async () => {
           <button aria-label="검색">
             <Search />
           </button>
-          {session?.user ? (
-            <>
-              <span>{session.user.name}님</span>
-              <form
-                action={async () => {
-                  'use server'
-                  await signOut({ redirectTo: '/' })
-                }}
-              >
-                <button type="submit">로그아웃</button>
-              </form>
-            </>
-          ) : (
-            <Link href={'/login'} aria-label="로그인하기">
-              Login
-            </Link>
-          )}
         </nav>
       </div>
     </header>
