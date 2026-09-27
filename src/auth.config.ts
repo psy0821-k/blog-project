@@ -17,6 +17,10 @@ export default {
     strategy: 'jwt',
   },
   callbacks: {
+    signIn({ user }) {
+      // 운영자 1인만 로그인/가입을 허용한다. 그 외 이메일은 계정 생성 자체를 막는다.
+      return user.email === process.env.ADMIN_EMAIL
+    },
     jwt({ token, user }) {
       if (user) {
         token.id = user.id
