@@ -1,5 +1,5 @@
-import { Search } from 'lucide-react'
 import Link from 'next/link'
+import { Search } from 'lucide-react'
 
 const Header = () => {
   return (
@@ -15,11 +15,8 @@ const Header = () => {
           <Link href={'/devlog'}>DevLog</Link>
         </nav>
 
-        <nav className="flex items-center">
-          <button aria-label="검색">
-            <Search />
-          </button>
-        </nav>
+        {/* <SearchButton /> */}
+        <Search />
       </div>
     </header>
   )
