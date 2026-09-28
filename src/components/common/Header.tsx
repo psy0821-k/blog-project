@@ -1,22 +1,41 @@
+'use client'
+
 import Link from 'next/link'
 import { Search } from 'lucide-react'
+import MobileMenu from '../features/off-canvas-menu/MobileMenu'
 
 const Header = () => {
   return (
-    <header className="border border-b-gray-100">
-      <div className="content flex justify-between h-15 items-center">
-        <Link href={'/'} aria-label="홈으로 이동" className="font-bold text-2xl">
+    <header className="content border-b border-gray-100">
+      <div className="flex h-15 items-center justify-between">
+        <Link href="/" aria-label="홈으로 이동" className="p-2 text-[18px] font-bold sm:text-2xl">
           PSY Dev Blog
         </Link>
 
-        <nav className="globalNav flex gap-4">
-          <Link href={'/projects'}>Projects</Link>
-          <Link href={'/lab'}>Lab</Link>
-          <Link href={'/devlog'}>DevLog</Link>
+        <nav className="hidden items-center gap-4 sm:flex">
+          <Link className="p-2" href="/projects">
+            Projects
+          </Link>
+
+          <Link className="p-2" href="/lab">
+            Lab
+          </Link>
+
+          <Link className="p-2" href="/devlog">
+            DevLog
+          </Link>
         </nav>
 
-        {/* <SearchButton /> */}
-        <Search />
+        <div className="flex items-center gap-1">
+          <button
+            type="button"
+            aria-label="검색 열기"
+            className="flex size-11 items-center justify-center rounded-full"
+          >
+            <Search aria-hidden="true" />
+          </button>
+          <MobileMenu />
+        </div>
       </div>
     </header>
   )
