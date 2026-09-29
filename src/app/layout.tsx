@@ -29,7 +29,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <QueryProvider>
           <Header />
-          <main className="content">{children}</main>
+          {children}
         </QueryProvider>
       </body>
     </html>
