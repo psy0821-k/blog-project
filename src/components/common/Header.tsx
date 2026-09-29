@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { Search } from 'lucide-react'
 import MobileMenu from '../features/off-canvas-menu/MobileMenu'
+import { MainMenu } from '@/lib/main-menu'
 
 const Header = () => {
   return (
@@ -13,17 +14,15 @@ const Header = () => {
         </Link>
 
         <nav className="hidden items-center gap-4 sm:flex">
-          <Link className="p-2" href="/projects">
-            Projects
-          </Link>
-
-          <Link className="p-2" href="/lab">
-            Lab
-          </Link>
-
-          <Link className="p-2" href="/devlog">
-            DevLog
-          </Link>
+          <ul className="flex font-semibold">
+            {MainMenu.map((menu) => (
+              <li key={menu.title}>
+                <Link className="p-2" href={menu.href} aria-label={`${menu.title} 이동하기`}>
+                  {menu.title}
+                </Link>
+              </li>
+            ))}
+          </ul>
         </nav>
 
         <div className="flex items-center gap-1">
