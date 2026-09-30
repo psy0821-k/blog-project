@@ -1,0 +1,27 @@
+/* 메뉴 소개 항목: 모바일은 세로 중앙 정렬, sm 이상은 가로 배치 */
+.menu-intro-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem 0;
+  text-align: center;
+  border-bottom: 1px solid #f1f1f1;
+}
+
+.menu-intro-title {
+  margin-bottom: 1rem;
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+  font-weight: 600;
+}
+
+@media (min-width: 40rem) {
+  .menu-intro-item {
+    flex-direction: row;
+    text-align: left;
+  }
+
+  .menu-intro-body {
+    margin-left: 3em;
+  }
+}

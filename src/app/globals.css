@@ -17,9 +17,6 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
-.section:first {
-  margin-top: 3rem;
-}
 
 /* docs/design.md 기준 콘텐츠 너비 */
 .content {
@@ -32,7 +29,7 @@ body {
   width: 100%;
   text-align: center;
   padding: 2px;
-  border-bottom: 1px solid #a7a3a3;
+  border-bottom: 1px solid #cccccc;
 }
 
 .mobileMenuLink:hover {
@@ -41,6 +38,33 @@ body {
 }
 
 @keyframes updown {
+}
+
+/* 좌우 20도씩 흔들리는 모션 */
+@keyframes swing {
+  0%,
+  100% {
+    transform: rotate(-5deg);
+  }
+  50% {
+    transform: rotate(5deg);
+  }
+}
+
+/* 글씨를 쓰듯 좌우로 이동하는 모션 */
+@keyframes write {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  10%,
+  30% {
+    transform: translateX(-3px);
+  }
+  20%,
+  50% {
+    transform: translateX(3px);
+  }
 }
 
 @media (min-width: 768px) {
@@ -54,9 +78,6 @@ body {
   .content {
     max-width: 1200px;
     padding-inline: 0;
-  }
-  .section:first {
-    margin-top: 5rem;
   }
 }
 
