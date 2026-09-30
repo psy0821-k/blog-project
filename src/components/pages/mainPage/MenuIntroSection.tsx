@@ -1,9 +1,37 @@
-import React from 'react'
+'use client'
+
+import { useRef } from 'react'
 import Image from 'next/image'
+import { useGSAP } from '@gsap/react'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+
+gsap.registerPlugin(ScrollTrigger)
 
 const MenuIntroSection = () => {
+  const sectionRef = useRef<HTMLElement>(null)
+
+  useGSAP(
+    () => {
+      // 섹션 상단이 화면 높이 20% 지점에 닿으면 메뉴가 하나씩 떠오름 (초기 숨김은 MenuIntro.css)
+      gsap.to('.menu-intro-item', {
+        opacity: 1,
+        y: 0,
+        duration: 0.6,
+        ease: 'power2.out',
+        stagger: 0.2,
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: 'top 20%',
+          toggleActions: 'play none none none',
+        },
+      })
+    },
+    { scope: sectionRef },
+  )
+
   return (
-    <section className="bg-gray-50">
+    <section ref={sectionRef} className="bg-gray-50">
       <div className="content pt-30 pb-30 pl-8 pr-8">
         <h2 className="font-bold text-4xl mb-8 sm:text-5xl">주요 메뉴 소개</h2>
         <article className="menu-intro-item">

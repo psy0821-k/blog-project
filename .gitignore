@@ -50,3 +50,6 @@ next-env.d.ts
 /docs/roadmap.md
 /docs/diagrams/
 /tutorial/
+
+# playwright mcp 산출물
+.playwright-mcp/

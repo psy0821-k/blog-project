@@ -25,3 +25,11 @@
     margin-left: 3em;
   }
 }
+
+/* 등장 애니메이션 초기 상태: JS와 모션이 모두 허용될 때만 숨김 (그 외에는 그대로 표시) */
+@media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+  .menu-intro-item {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+}
