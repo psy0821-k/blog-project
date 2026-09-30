@@ -25,6 +25,7 @@ const MobileNav = ({ isOpen, close }: Props) => {
                   <Link
                     className="mobileMenuLink font-semibold"
                     href={menu.href}
+                    onClick={close}
                     aria-label={`${menu.title} 이동하기`}
                   >
                     {menu.title}
