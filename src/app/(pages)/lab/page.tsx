@@ -10,7 +10,7 @@ const LabPage = () => {
           <li>
             <article>
               <Image
-                src={'/fallback-image.jpg'}
+                src={'/fallback.webp'}
                 alt=""
                 width={300}
                 height={200}

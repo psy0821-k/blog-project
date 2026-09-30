@@ -21,7 +21,7 @@ const ProjectPage = () => {
               <li key={post.id}>
                 <article>
                   <Image
-                    src={post.thumbnailUrl || '/fallback-image.jpg'}
+                    src={post.thumbnailUrl || '/fallback.webp'}
                     alt=""
                     width={300}
                     height={200}
