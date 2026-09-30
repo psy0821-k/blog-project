@@ -1,0 +1,40 @@
+.hero-title {
+  color: white;
+  font-size: clamp(2rem, 8vw, 9rem);
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+}
+
+.noWrap {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.pinwheel {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  margin-left: 0.15em;
+  vertical-align: middle;
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.2));
+}
+
+.pinwheelSpin {
+  transform-origin: 50px 50px;
+  animation: spin 4s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pinwheelSpin {
+    animation: none;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

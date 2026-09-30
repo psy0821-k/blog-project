@@ -7,9 +7,10 @@ test.describe('Header', () => {
     await page.setViewportSize({ width: 1024, height: 800 })
     await page.goto('/')
 
-    await expect(page.getByRole('link', { name: 'Projects' })).toBeVisible()
-    await expect(page.getByRole('link', { name: 'Lab' })).toBeVisible()
-    await expect(page.getByRole('link', { name: 'DevLog' })).toBeVisible()
+    await expect(page.getByRole('link', { name: '프로젝트 이동하기' })).toBeVisible()
+    await expect(page.getByRole('link', { name: '실험실 이동하기' })).toBeVisible()
+    await expect(page.getByRole('link', { name: '개발로그 이동하기' })).toBeVisible()
+    await expect(page.getByRole('link', { name: '소개 이동하기' })).toBeVisible()
     await expect(page.getByRole('button', { name: '메뉴 열기' })).toBeHidden()
   })
 
@@ -27,14 +28,14 @@ test.describe('Header', () => {
     await expect(menuButton).toHaveAttribute('aria-expanded', 'true')
 
     const nav = page.locator('#mobile-nav')
-    await expect(nav.getByRole('link', { name: '홈 이동하기' })).toBeVisible()
+    await expect(nav.getByRole('link', { name: '소개 이동하기' })).toBeVisible()
     await expect(nav.getByRole('link', { name: '프로젝트 이동하기' })).toBeVisible()
     await expect(nav.getByRole('link', { name: '실험실 이동하기' })).toBeVisible()
     await expect(nav.getByRole('link', { name: '개발로그 이동하기' })).toBeVisible()
 
     await nav.getByRole('button').click()
     await expect(menuButton).toHaveAttribute('aria-expanded', 'false')
-    await expect(nav.getByRole('link', { name: '홈 이동하기' })).toBeHidden()
+    await expect(nav.getByRole('link', { name: '소개 이동하기' })).toBeHidden()
   })
 
   test('오프캔버스 메뉴의 링크를 클릭하면 해당 페이지로 이동한다', async ({ page }) => {
@@ -56,10 +57,10 @@ test.describe('Header', () => {
     await page.getByRole('button', { name: '메뉴 열기' }).click()
 
     const nav = page.locator('#mobile-nav')
-    await expect(nav.getByRole('link', { name: '홈 이동하기' })).toBeVisible()
+    await expect(nav.getByRole('link', { name: '소개 이동하기' })).toBeVisible()
 
     await page.setViewportSize({ width: 1024, height: 800 })
 
-    await expect(nav.getByRole('link', { name: '홈 이동하기' })).toBeHidden()
+    await expect(nav.getByRole('link', { name: '소개 이동하기' })).toBeHidden()
   })
 })
