@@ -12,7 +12,7 @@ export const createProjectSchema = z.object({
   metaTitle: z.string().trim().optional(),
   metaDescription: z.string().trim().optional(),
   published: z.boolean(),
-  // 본문에 삽입된 이미지/동영상 URL 목록. 업로드(/api/media/upload)로 받은 blob URL을 그대로 전달한다.
+  // 본문에 삽입된 이미지/동영상 URL 목록. ImageKit 업로드(/api/media/upload-auth 인증)로 받은 URL을 그대로 전달한다.
   mediaUrls: z.array(z.string().url()).optional(),
 })
 
