@@ -9,7 +9,7 @@ const Header = () => {
   return (
     <header className="content border-b border-gray-100">
       <div className="flex h-15 items-center justify-between">
-        <Link href="/" aria-label="홈으로 이동" className="p-2 text-[18px] font-bold sm:text-2xl">
+        <Link href="/" aria-label="홈으로 이동" className="p-2 text-[18px] font-bold sm:text-xl">
           PSY Dev Blog
         </Link>
 

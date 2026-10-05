@@ -10,15 +10,24 @@
 
 .menu-intro-title {
   margin-bottom: 1rem;
-  font-size: 1.875rem;
-  line-height: 2.25rem;
+  font-size: 1.5rem;
+  line-height: 2rem;
   font-weight: 600;
+}
+
+.menu-intro-body p {
+  font-size: 1.125rem;
 }
 
 @media (min-width: 40rem) {
   .menu-intro-item {
     flex-direction: row;
     text-align: left;
+  }
+
+  .menu-intro-title {
+    font-size: 1.875rem;
+    line-height: 2.25rem;
   }
 
   .menu-intro-body {

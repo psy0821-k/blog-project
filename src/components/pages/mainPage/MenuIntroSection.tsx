@@ -33,7 +33,7 @@ const MenuIntroSection = () => {
   return (
     <section ref={sectionRef} className="bg-gray-50">
       <div className="content pt-30 pb-30 pl-8 pr-8">
-        <h2 className="font-bold text-4xl mb-8 sm:text-5xl">주요 메뉴 소개</h2>
+        <h2 className="font-bold text-3xl mb-8 sm:text-4xl">주요 메뉴 소개</h2>
         <article className="menu-intro-item">
           <Image
             aria-hidden
@@ -63,7 +63,7 @@ const MenuIntroSection = () => {
           />
           <div className="menu-intro-body">
             <h3 className="menu-intro-title">실험실</h3>
-            <p className="sm:text-[1.25em]">
+            <p>
               새로운 기능과 인터랙션을 자유롭게 실험하는 공간입니다. 작은 아이디어부터 다양한 UI와
               기술을 직접 구현하며 결과를 기록합니다.
             </p>
