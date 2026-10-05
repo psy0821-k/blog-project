@@ -1,7 +1,6 @@
 'use client'
 
 import Link from 'next/link'
-import { Search } from 'lucide-react'
 import MobileMenu from '../features/off-canvas-menu/MobileMenu'
 import { MainMenu } from '@/lib/main-menu'
 
@@ -26,14 +25,7 @@ const Header = () => {
           </ul>
         </nav>
 
-        <div className="flex items-center gap-1">
-          <button
-            type="button"
-            aria-label="검색 열기"
-            className="flex size-11 items-center justify-center rounded-full"
-          >
-            <Search aria-hidden="true" />
-          </button>
+        <div className="flex items-center mr-4 sm:hidden">
           <MobileMenu />
         </div>
       </div>
