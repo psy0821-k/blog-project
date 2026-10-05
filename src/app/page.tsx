@@ -6,6 +6,7 @@ import ProjectIntroSection from '@/components/pages/mainPage/ProjectIntroSection
 export default function Home() {
   return (
     <main>
+      <h1 className="sr-only">박성윤 개발 블로그</h1>
       <HeroSection />
       <BlogIntroSection />
       <MenuIntroSection />
