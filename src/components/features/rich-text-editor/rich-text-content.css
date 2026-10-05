@@ -1,0 +1,78 @@
+/* 글 본문 이미지 크기 프리셋(에디터/상세 공통). 모바일 → 태블릿(768) → 데스크탑(1440) 순으로 폭이 달라진다. */
+.img-sm,
+.img-md,
+.img-lg {
+  height: auto;
+  max-width: 100%;
+}
+
+.img-sm {
+  width: 60%;
+}
+
+.img-md,
+.img-lg {
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .img-sm {
+    width: 40%;
+  }
+
+  .img-md {
+    width: 70%;
+  }
+}
+
+@media (min-width: 1440px) {
+  .img-sm {
+    width: 30%;
+  }
+
+  .img-md {
+    width: 50%;
+  }
+}
+
+/* 이미지 가로배치*/
+.img-gap-sm,
+.img-gap-md,
+.img-gap-lg {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+.img-gap-sm {
+  gap: 8px;
+}
+
+.img-gap-md {
+  gap: 16px;
+}
+
+.img-gap-lg {
+  gap: 32px;
+}
+
+.ql-align-center {
+  text-align: center;
+}
+
+.ql-align-right {
+  text-align: right;
+}
+
+/* 이미지 및 텍스트 정렬기능*/
+.img-gap-sm.ql-align-center,
+.img-gap-md.ql-align-center,
+.img-gap-lg.ql-align-center {
+  justify-content: center;
+}
+
+.img-gap-sm.ql-align-right,
+.img-gap-md.ql-align-right,
+.img-gap-lg.ql-align-right {
+  justify-content: flex-end;
+}

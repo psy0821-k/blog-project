@@ -1,5 +1,6 @@
 @import 'tailwindcss';
 @import '../components/pages/mainPage/mainPage.css';
+@import '../components/features/rich-text-editor/rich-text-content.css';
 :root {
   --background: #ffffff;
   --foreground: #171717;
