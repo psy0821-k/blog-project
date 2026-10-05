@@ -9,7 +9,8 @@ const MobileMenu = () => {
 
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth >= 768) {
+      // Tailwind sm 브레이크포인트(640px)와 동일하게 맞춤
+      if (window.innerWidth >= 640) {
         setIsOpen(false)
       }
     }

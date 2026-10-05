@@ -14,6 +14,7 @@ const Header = () => {
         </Link>
 
         <nav className="hidden items-center gap-4 sm:flex">
+          <h2 className="sr-only">메뉴</h2>
           <ul className="flex font-semibold">
             {MainMenu.map((menu) => (
               <li key={menu.title}>
