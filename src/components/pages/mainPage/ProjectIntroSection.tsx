@@ -80,7 +80,7 @@ const ProjectIntroSection = () => {
     <section ref={sectionRef} className="relative md:h-dvh">
       <div className="flex flex-col py-16 md:h-full ">
         <div className="content pt-30">
-          <h2 className="mb-8 pl-8 pr-8 text-4xl font-bold sm:text-5xl">최근 프로젝트</h2>
+          <h2 className="mb-8 pl-8 pr-8 text-3xl font-bold sm:text-4xl">최근 프로젝트</h2>
         </div>
         <div ref={viewportRef} className="overflow-x-auto md:min-h-0 md:flex-1">
           <div ref={trackRef} className="flex flex-col md:h-full md:w-max md:flex-row">
@@ -101,8 +101,8 @@ const ProjectIntroSection = () => {
                   />
                 </div>
                 <Link href={'#'} aria-label={`${project.title}로 이동하기`}>
-                  <h3 className="mb-2 text-3xl font-bold">{project.title}</h3>
-                  <p className="text-xl">{project.description}</p>
+                  <h3 className="mb-2 text-2xl font-bold sm:text-3xl">{project.title}</h3>
+                  <p className="text-lg">{project.description}</p>
                 </Link>
               </article>
             ))}

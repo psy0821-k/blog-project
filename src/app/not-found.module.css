@@ -1,0 +1,29 @@
+/* 404 이미지 프레임. 필터가 이미지를 최대 ±35px 밀어내므로 가장자리에 빈틈이 생기지 않게 키우고 넘치는 부분을 잘라낸다. */
+.frame {
+  width: min(200%, 568px);
+  overflow: hidden;
+  border-radius: 0.5rem;
+}
+
+.image {
+  display: block;
+  width: 100%;
+  height: auto;
+  transform: scale(1.2);
+  filter: url(#not-found-noise);
+  border-radius: 1rem;
+}
+
+/* 필터 정의만 담는 SVG. display:none이면 일부 브라우저에서 필터가 적용되지 않아 크기만 0으로 둔다. */
+.filterDefs {
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .image {
+    transform: none;
+    filter: none;
+  }
+}
