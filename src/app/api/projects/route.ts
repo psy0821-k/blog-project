@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireAdmin } from '@/lib/api-auth'
 import { forbiddenResponse, invalidJsonResponse, validationErrorResponse } from '@/lib/api-response'
+import { validateCategoryForType } from '@/lib/category'
 import { inferMediaType } from '@/lib/media'
 import { getPublishedPostList } from '@/lib/post-list'
 import { createProjectSchema } from '@/lib/post-schema'
@@ -43,7 +44,13 @@ export async function POST(request: NextRequest) {
     return validationErrorResponse(parsed.error)
   }
 
-  const { title, content, thumbnailUrl, metaTitle, metaDescription, published, mediaUrls } = parsed.data
+  const { title, content, thumbnailUrl, metaTitle, metaDescription, published, mediaUrls, categoryId } = parsed.data
+
+  const invalidCategory = await validateCategoryForType(categoryId, 'PROJECT')
+
+  if (invalidCategory) {
+    return invalidCategory
+  }
 
   const project = await prisma.$transaction(async (tx) => {
     const created = await tx.post.create({
@@ -56,6 +63,7 @@ export async function POST(request: NextRequest) {
         metaTitle,
         metaDescription,
         published,
+        categoryId,
         authorId: admin.userId,
       },
     })

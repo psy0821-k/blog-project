@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireAdminSession } from '@/lib/api-auth'
 import { forbiddenResponse, invalidJsonResponse, notFoundResponse, validationErrorResponse } from '@/lib/api-response'
+import { validateCategoryForType } from '@/lib/category'
 import { inferMediaType } from '@/lib/media'
 import { getPublishedPostBySlug } from '@/lib/post-detail'
 import { updateLabSchema } from '@/lib/post-schema'
@@ -48,6 +49,12 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
 
   if (!existing || existing.type !== 'LAB') {
     return notFoundResponse()
+  }
+
+  const invalidCategory = await validateCategoryForType(parsed.data.categoryId, 'LAB')
+
+  if (invalidCategory) {
+    return invalidCategory
   }
 
   const { mediaUrls, ...postData } = parsed.data

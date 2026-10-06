@@ -21,6 +21,11 @@ if (process.env.NODE_ENV !== 'production') {
  * findUnique로 존재를 확인한 뒤 update/delete하는 check-then-act 패턴은
  * 동시 요청 시 그 사이에 레코드가 삭제될 수 있어(레이스 컨디션), 이 에러를 별도로 처리해야 한다.
  */
+/** unique 제약 위반(P2002) 에러인지 확인한다. */
+export function isUniqueConstraintError(error: unknown): boolean {
+  return error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002'
+}
+
 export function isRecordNotFoundError(error: unknown): boolean {
   return error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025'
 }
