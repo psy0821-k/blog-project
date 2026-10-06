@@ -14,7 +14,8 @@ interface ListWrapperProps {
 export const ListWrapper = ({ type }: ListWrapperProps) => {
   const searchParams = useSearchParams()
   const page = Math.max(1, Number(searchParams.get('page')) || 1)
-  const { data, isLoading, isError, isPlaceholderData } = usePostList(type, { page })
+  const category = searchParams.get('category') ?? undefined
+  const { data, isLoading, isError, isPlaceholderData } = usePostList(type, { page, category })
 
   // 이전 페이지 데이터(placeholder)의 meta로는 범위를 판단할 수 없으므로 실제 응답이 온 뒤에만 검사한다.
   // 글이 하나도 없어도 1페이지는 유효하므로 totalPages가 0이어도 최소 1로 본다.
@@ -48,7 +49,7 @@ export const ListWrapper = ({ type }: ListWrapperProps) => {
           data?.meta.totalCount === 0 && <NoResult />
         )}
 
-        {data && <Pagination page={page} totalPages={data.meta.totalPages} />}
+        {data && <Pagination page={page} totalPages={data.meta.totalPages} category={category} />}
       </section>
     </div>
   )
