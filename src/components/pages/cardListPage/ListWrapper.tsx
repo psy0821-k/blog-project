@@ -1,7 +1,9 @@
 'use client'
+import { useSearchParams } from 'next/navigation'
 import { usePostList } from '@/hooks/use-post-list'
 import CardComponent from './CardComponent'
 import NoResult from '@/components/common/NoResult'
+import Pagination from './Pagination'
 
 type ProjectType = 'projects' | 'lab'
 
@@ -10,7 +12,9 @@ interface ListWrapperProps {
 }
 
 export const ListWrapper = ({ type }: ListWrapperProps) => {
-  const { data, isLoading, isError } = usePostList(type)
+  const searchParams = useSearchParams()
+  const page = Math.max(1, Number(searchParams.get('page')) || 1)
+  const { data, isLoading, isError } = usePostList(type, { page })
 
   return (
     <div>
@@ -34,8 +38,11 @@ export const ListWrapper = ({ type }: ListWrapperProps) => {
             ))}
           </ul>
         ) : (
-          <NoResult />
+          // 로딩/에러 중에는 보이지 않고, 글이 하나도 없을 때만 보인다.
+          data?.meta.totalCount === 0 && <NoResult />
         )}
+
+        {data && <Pagination page={page} totalPages={data.meta.totalPages} />}
       </section>
     </div>
   )

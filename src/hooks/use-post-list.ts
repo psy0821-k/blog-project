@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import type { PaginationMeta } from '@/lib/pagination'
 
 export type PostListType = 'projects' | 'lab' | 'devlog'
@@ -42,5 +42,7 @@ export function usePostList(type: PostListType, params: UsePostListParams = {}) 
   return useQuery({
     queryKey: ['posts', type, page, pageSize],
     queryFn: () => fetchPostList(type, { page, pageSize }),
+    // 페이지 전환 중에도 이전 페이지 목록을 유지해 깜빡임을 막는다.
+    placeholderData: keepPreviousData,
   })
 }
