@@ -11,7 +11,7 @@ export default {
     GitHub({ allowDangerousEmailAccountLinking: true }),
   ],
   pages: {
-    signIn: '/login',
+    signIn: '/admin/login',
   },
   session: {
     strategy: 'jwt',

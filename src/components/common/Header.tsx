@@ -1,10 +1,14 @@
 'use client'
 
 import Link from 'next/link'
+import { signOut } from 'next-auth/react'
 import MobileMenu from '../features/off-canvas-menu/MobileMenu'
+import { useIsAdmin } from '@/hooks/use-admin-session'
 import { MainMenu } from '@/lib/main-menu'
 
 const Header = () => {
+  const isAdmin = useIsAdmin()
+
   return (
     <header className="content border-b border-gray-100">
       <div className="flex h-15 items-center justify-between">
@@ -23,6 +27,19 @@ const Header = () => {
               </li>
             ))}
           </ul>
+          {isAdmin && (
+            <div className="flex items-center gap-2 text-sm">
+              <p>관리자님 안녕하세요</p>
+              {/* 전체 새로고침을 겸해 세션 캐시를 비우고 홈으로 이동한다. */}
+              <button
+                type="button"
+                className="rounded px-2 py-1 hover:bg-gray-100"
+                onClick={() => signOut({ redirectTo: '/' })}
+              >
+                로그아웃
+              </button>
+            </div>
+          )}
         </nav>
 
         <div className="flex items-center mr-4 sm:hidden">
