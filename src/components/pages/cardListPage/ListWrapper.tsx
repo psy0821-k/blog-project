@@ -1,5 +1,5 @@
 'use client'
-import { useSearchParams } from 'next/navigation'
+import { notFound, useSearchParams } from 'next/navigation'
 import { usePostList } from '@/hooks/use-post-list'
 import CardComponent from './CardComponent'
 import NoResult from '@/components/common/NoResult'
@@ -14,7 +14,13 @@ interface ListWrapperProps {
 export const ListWrapper = ({ type }: ListWrapperProps) => {
   const searchParams = useSearchParams()
   const page = Math.max(1, Number(searchParams.get('page')) || 1)
-  const { data, isLoading, isError } = usePostList(type, { page })
+  const { data, isLoading, isError, isPlaceholderData } = usePostList(type, { page })
+
+  // 이전 페이지 데이터(placeholder)의 meta로는 범위를 판단할 수 없으므로 실제 응답이 온 뒤에만 검사한다.
+  // 글이 하나도 없어도 1페이지는 유효하므로 totalPages가 0이어도 최소 1로 본다.
+  if (data && !isPlaceholderData && page > Math.max(1, data.meta.totalPages)) {
+    notFound()
+  }
 
   return (
     <div>
