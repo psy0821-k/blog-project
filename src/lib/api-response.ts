@@ -17,6 +17,14 @@ export function notFoundResponse(message = 'Not Found') {
   return errorResponse(message, 404)
 }
 
+export function badRequestResponse(message = 'Bad Request') {
+  return errorResponse(message, 400)
+}
+
+export function conflictResponse(message = 'Conflict') {
+  return errorResponse(message, 409)
+}
+
 export function invalidJsonResponse() {
   return errorResponse('Invalid JSON', 400)
 }

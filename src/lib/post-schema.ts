@@ -6,6 +6,8 @@ import { z } from 'zod'
  */
 
 export const createProjectSchema = z.object({
+  // 서브메뉴(카테고리) 지정. 글 종류와 같은 type의 카테고리여야 한다.
+  categoryId: z.string().uuid().optional(),
   title: z.string().trim().min(1),
   content: z.string(),
   thumbnailUrl: z.string().url().optional(),
@@ -17,6 +19,8 @@ export const createProjectSchema = z.object({
 })
 
 export const updateProjectSchema = z.object({
+  // 서브메뉴(카테고리) 변경. null은 미분류로 되돌린다.
+  categoryId: z.string().uuid().nullable().optional(),
   title: z.string().trim().min(1).optional(),
   content: z.string().optional(),
   thumbnailUrl: z.string().url().optional(),
@@ -28,6 +32,8 @@ export const updateProjectSchema = z.object({
 })
 
 export const updateDevLogSchema = z.object({
+  // 서브메뉴(카테고리) 변경. null은 미분류로 되돌린다.
+  categoryId: z.string().uuid().nullable().optional(),
   title: z.string().trim().min(1).optional(),
   content: z.string().optional(),
   metaTitle: z.string().trim().optional(),
@@ -38,6 +44,8 @@ export const updateDevLogSchema = z.object({
 })
 
 export const updateLabSchema = z.object({
+  // 서브메뉴(카테고리) 변경. null은 미분류로 되돌린다.
+  categoryId: z.string().uuid().nullable().optional(),
   title: z.string().trim().min(1).optional(),
   content: z.string().optional(),
   thumbnailUrl: z.string().url().optional(),
@@ -48,6 +56,21 @@ export const updateLabSchema = z.object({
   mediaUrls: z.array(z.string().url()).optional(),
 })
 
+export const postTypeSchema = z.enum(['PROJECT', 'LAB', 'DEV_LOG'])
+
+export const createCategorySchema = z.object({
+  type: postTypeSchema,
+  name: z.string().trim().min(1).max(30),
+  order: z.number().int().min(0).optional(),
+})
+
+export const updateCategorySchema = z.object({
+  name: z.string().trim().min(1).max(30).optional(),
+  order: z.number().int().min(0).optional(),
+})
+
+export type CreateCategoryInput = z.infer<typeof createCategorySchema>
+export type UpdateCategoryInput = z.infer<typeof updateCategorySchema>
 export type CreateProjectInput = z.infer<typeof createProjectSchema>
 export type UpdateProjectInput = z.infer<typeof updateProjectSchema>
 export type UpdateDevLogInput = z.infer<typeof updateDevLogSchema>

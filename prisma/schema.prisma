@@ -95,12 +95,36 @@ model Post {
   projectId String?
   project   Post?   @relation("ProjectDevLogs", fields: [projectId], references: [id])
 
+  // 서브메뉴(카테고리). 미지정 글은 null, 카테고리가 삭제되면 null로 돌아간다.
+  categoryId String?
+  category   Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+
   media    Media[]
   postTags PostTag[]
 
   @@index([type, published])
   @@index([authorId])
   @@index([projectId])
+  @@index([categoryId])
+}
+
+/// 게시글 종류(PostType)별 서브메뉴. 글 하나는 카테고리 하나에만 속한다.
+model Category {
+  id    String   @id @default(uuid())
+  type  PostType
+  name  String
+  slug  String
+  /// 서브메뉴 노출 순서(오름차순)
+  order Int      @default(0)
+
+  posts Post[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([type, slug])
+  @@unique([type, name])
+  @@index([type, order])
 }
 
 model Media {

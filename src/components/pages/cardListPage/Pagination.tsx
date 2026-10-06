@@ -5,6 +5,8 @@ const PAGES_PER_GROUP = 5
 interface PaginationProps {
   page: number
   totalPages: number
+  // 서브메뉴 선택 상태. 페이지를 넘겨도 유지되도록 링크에 함께 싣는다.
+  category?: string
 }
 
 interface PageRange {
@@ -19,8 +21,15 @@ export const getPageRange = (page: number, totalPages: number): PageRange => {
   return { start, end: Math.min(totalPages, start + PAGES_PER_GROUP - 1) }
 }
 
-export const Pagination = ({ page, totalPages }: PaginationProps) => {
+export const Pagination = ({ page, totalPages, category }: PaginationProps) => {
   if (totalPages <= 1) return null
+
+  const getPageHref = (pageNumber: number) => {
+    const searchParams = new URLSearchParams({ page: String(pageNumber) })
+    if (category) searchParams.set('category', category)
+
+    return `?${searchParams.toString()}`
+  }
 
   const { start, end } = getPageRange(page, totalPages)
   const pageNumbers = Array.from({ length: end - start + 1 }, (_, index) => start + index)
@@ -34,7 +43,7 @@ export const Pagination = ({ page, totalPages }: PaginationProps) => {
   const renderLink = (pageNumber: number) => (
     <Link
       key={pageNumber}
-      href={`?page=${pageNumber}`}
+      href={getPageHref(pageNumber)}
       aria-current={pageNumber === page ? 'page' : undefined}
       className={pageNumber === page ? 'font-bold underline' : undefined}
     >
@@ -49,7 +58,7 @@ export const Pagination = ({ page, totalPages }: PaginationProps) => {
         {label}
       </span>
     ) : (
-      <Link href={`?page=${targetPage}`}>{label}</Link>
+      <Link href={getPageHref(targetPage)}>{label}</Link>
     )
 
   return (
