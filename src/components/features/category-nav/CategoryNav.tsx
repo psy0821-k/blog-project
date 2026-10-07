@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useLayoutEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import {
@@ -13,20 +13,22 @@ interface CategoryNavProps {
   isAdmin: boolean
 }
 
-// 서브메뉴를 제공하는 경로(첫 세그먼트)와 글 종류 매핑. 목록·상세가 같은 서브메뉴를 공유한다.
 const SEGMENT_POST_TYPE: Record<string, CategoryPostType> = {
   projects: 'PROJECT',
   lab: 'LAB',
 }
 
 const BASE_ITEM_CLASS = 'rounded-lg border border-gray-300 px-4 py-2 text-sm'
-// 사이드바(1440px 이상)에서는 항목이 한 줄을 꽉 채우고, 가로 스크롤 줄에서는 내용 폭만큼만 차지한다.
 const ITEM_CLASS = `${BASE_ITEM_CLASS} shrink-0 min-[1440px]:w-full`
-// 수정/삭제 버튼이 있는 항목은 링크가 남는 폭을 채워, 버튼 크기가 이름 길이와 무관하게 고정된다.
 const CATEGORY_LINK_CLASS = `${BASE_ITEM_CLASS} min-w-0 flex-1 truncate`
 const ACTIVE_ITEM_CLASS = 'border-gray-900 bg-gray-900 text-white'
 const ADMIN_BUTTON_CLASS =
   'inline-flex h-9 w-12 shrink-0 items-center justify-center rounded text-xs text-gray-500 hover:bg-gray-100'
+
+interface ListHeights {
+  collapsed: number
+  full: number
+}
 
 export const CategoryNav = ({ isAdmin }: CategoryNavProps) => {
   const pathname = usePathname()
@@ -49,9 +51,41 @@ const CategoryNavList = ({ segment, postType, isAdmin }: CategoryNavListProps) =
   const searchParams = useSearchParams()
   const activeSlug = searchParams.get('category')
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [isExpanded, setIsExpanded] = useState(false)
+  const [heights, setHeights] = useState<ListHeights>({ collapsed: 0, full: 0 })
+  const listRef = useRef<HTMLDivElement>(null)
 
   const { data: categories = [] } = useCategories(postType)
   const { create, update, remove } = useCategoryMutations(postType)
+
+  const categoryCount = categories.length
+
+  useLayoutEffect(() => {
+    const list = listRef.current
+    const firstItem = list?.firstElementChild
+
+    if (!list || !(firstItem instanceof HTMLElement)) return
+
+    const measure = () => {
+      const next = { collapsed: firstItem.offsetHeight, full: list.offsetHeight }
+
+      setHeights((prev) =>
+        prev.collapsed === next.collapsed && prev.full === next.full ? prev : next,
+      )
+    }
+
+    measure()
+
+    const observer = new ResizeObserver(measure)
+    observer.observe(list)
+
+    return () => observer.disconnect()
+  }, [categoryCount, isAdmin, errorMessage])
+
+  const isOverflowing = heights.full > heights.collapsed + 1
+  // 한 줄로 줄어 더보기가 사라지면 펼침 상태도 함께 해제한다.
+  const isOpen = isExpanded && isOverflowing
+  const listHeight = isOpen ? heights.full : heights.collapsed
 
   const runMutation = async (action: () => Promise<unknown>) => {
     setErrorMessage(null)
@@ -63,7 +97,6 @@ const CategoryNavList = ({ segment, postType, isAdmin }: CategoryNavListProps) =
     }
   }
 
-  // 에디터의 askText 패널은 Quill 모듈을 함께 불러와 서버 렌더링에서 깨지므로 브라우저 기본 입력창을 쓴다.
   const handleCreate = async () => {
     const name = window.prompt('서브메뉴 이름을 입력하세요.')?.trim()
 
@@ -92,68 +125,91 @@ const CategoryNavList = ({ segment, postType, isAdmin }: CategoryNavListProps) =
   }
 
   return (
-    <nav
-      aria-label="서브 메뉴"
-      className="flex gap-2 overflow-x-auto px-4 py-3 md:px-0 min-[1440px]:flex-col min-[1440px]:overflow-visible"
-    >
-      <Link
-        href={`/${segment}`}
-        aria-current={!activeSlug ? 'page' : undefined}
-        className={`${ITEM_CLASS} ${!activeSlug ? ACTIVE_ITEM_CLASS : ''}`}
+    <nav aria-label="서브 메뉴" className="px-4 py-3 md:px-0">
+      <div
+        id="category-list"
+        style={
+          listHeight ? ({ '--list-height': `${listHeight}px` } as React.CSSProperties) : undefined
+        }
+        className="h-(--list-height) overflow-hidden transition-[height] duration-300 ease-out min-[1440px]:h-auto min-[1440px]:overflow-visible"
       >
-        전체
-      </Link>
+        {/* 높이 측정은 높이가 고정되지 않는 안쪽 래퍼에서 한다 */}
+        <div ref={listRef} className="flex flex-wrap gap-2 min-[1440px]:flex-col">
+          <Link
+            href={`/${segment}`}
+            aria-current={!activeSlug ? 'page' : undefined}
+            className={`${ITEM_CLASS} ${!activeSlug ? ACTIVE_ITEM_CLASS : ''}`}
+          >
+            전체
+          </Link>
 
-      {categories.map((category) => {
-        const isActive = activeSlug === category.slug
+          {categories.map((category) => {
+            const isActive = activeSlug === category.slug
 
-        return (
-          <div key={category.id} className="flex shrink-0 items-center gap-1 min-[1440px]:w-full">
-            <Link
-              href={`/${segment}?category=${category.slug}`}
-              aria-current={isActive ? 'page' : undefined}
-              className={`${CATEGORY_LINK_CLASS} ${isActive ? ACTIVE_ITEM_CLASS : ''}`}
+            return (
+              <div
+                key={category.id}
+                className="flex shrink-0 items-center gap-1 min-[1440px]:w-full"
+              >
+                <Link
+                  href={`/${segment}?category=${category.slug}`}
+                  aria-current={isActive ? 'page' : undefined}
+                  className={`${CATEGORY_LINK_CLASS} ${isActive ? ACTIVE_ITEM_CLASS : ''}`}
+                >
+                  {category.name}
+                </Link>
+                {isAdmin && (
+                  <>
+                    <button
+                      type="button"
+                      className={ADMIN_BUTTON_CLASS}
+                      aria-label={`${category.name} 수정`}
+                      onClick={() => handleRename(category)}
+                    >
+                      수정
+                    </button>
+                    <button
+                      type="button"
+                      className={ADMIN_BUTTON_CLASS}
+                      aria-label={`${category.name} 삭제`}
+                      onClick={() => handleDelete(category)}
+                    >
+                      삭제
+                    </button>
+                  </>
+                )}
+              </div>
+            )
+          })}
+
+          {isAdmin && (
+            <button
+              type="button"
+              className={`${ITEM_CLASS} border-dashed text-gray-500`}
+              onClick={handleCreate}
             >
-              {category.name}
-            </Link>
-            {isAdmin && (
-              <>
-                <button
-                  type="button"
-                  className={ADMIN_BUTTON_CLASS}
-                  aria-label={`${category.name} 수정`}
-                  onClick={() => handleRename(category)}
-                >
-                  수정
-                </button>
-                <button
-                  type="button"
-                  className={ADMIN_BUTTON_CLASS}
-                  aria-label={`${category.name} 삭제`}
-                  onClick={() => handleDelete(category)}
-                >
-                  삭제
-                </button>
-              </>
-            )}
-          </div>
-        )
-      })}
+              + 추가
+            </button>
+          )}
 
-      {isAdmin && (
+          {errorMessage && (
+            <p role="alert" className="shrink-0 self-center text-xs text-red-600">
+              {errorMessage}
+            </p>
+          )}
+        </div>
+      </div>
+
+      {isOverflowing && (
         <button
           type="button"
-          className={`${ITEM_CLASS} border-dashed text-gray-500`}
-          onClick={handleCreate}
+          aria-expanded={isOpen}
+          aria-controls="category-list"
+          onClick={() => setIsExpanded((prev) => !prev)}
+          className="mt-2 text-xs px-2 py-1 rounded-2xl bg-blue-600 text-white hover:bg-blue-700 min-[1440px]:hidden"
         >
-          + 추가
+          {isOpen ? '접기' : '더보기'}
         </button>
-      )}
-
-      {errorMessage && (
-        <p role="alert" className="shrink-0 self-center text-xs text-red-600">
-          {errorMessage}
-        </p>
       )}
     </nav>
   )
