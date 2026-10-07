@@ -5,7 +5,18 @@ import { z } from 'zod'
  * 서버(route.ts)는 safeParse에, 프론트(훅/폼)는 z.infer<typeof ...>로 타입만 가져다 쓴다.
  */
 
+// URL에 쓰는 식별자. 글자(한글 포함)·숫자를 하이픈으로 이은 형태만 허용하고 소문자로 정규화한다.
+export const slugSchema = z
+  .string()
+  .trim()
+  .toLowerCase()
+  .min(1)
+  .max(100)
+  .regex(/^[\p{L}\p{N}]+(?:-[\p{L}\p{N}]+)*$/u)
+
 export const createProjectSchema = z.object({
+  // 직접 지정할 slug. 생략하면 서버가 제목으로 생성한다. 이미 있는 slug면 409를 반환한다.
+  slug: slugSchema.optional(),
   // 서브메뉴(카테고리) 지정. 글 종류와 같은 type의 카테고리여야 한다.
   categoryId: z.string().uuid().optional(),
   title: z.string().trim().min(1),
