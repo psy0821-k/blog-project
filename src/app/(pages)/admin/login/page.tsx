@@ -12,14 +12,6 @@ export default function LoginPage() {
       >
         <button type="submit">Google로 로그인</button>
       </form>
-      <form
-        action={async () => {
-          'use server'
-          await signIn('github', { redirectTo: '/' })
-        }}
-      >
-        <button type="submit">GitHub으로 로그인</button>
-      </form>
     </main>
   )
 }
