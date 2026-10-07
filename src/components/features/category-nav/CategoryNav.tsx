@@ -1,13 +1,10 @@
 'use client'
 import Link from 'next/link'
 import { usePathname, useSearchParams } from 'next/navigation'
+import { useIsAdmin } from '@/hooks/use-admin-session'
 import { useCategories, type CategoryPostType } from '@/hooks/use-categories'
 import { useCategoryActions } from '@/hooks/use-category-actions'
 import { useCollapsibleHeight } from '@/hooks/use-collapsible-height'
-
-interface CategoryNavProps {
-  isAdmin: boolean
-}
 
 const SEGMENT_POST_TYPE: Record<string, CategoryPostType> = {
   projects: 'PROJECT',
@@ -21,23 +18,23 @@ const ACTIVE_ITEM_CLASS = 'border-gray-900 bg-gray-900 text-white'
 const ADMIN_BUTTON_CLASS =
   'inline-flex h-9 w-12 shrink-0 items-center justify-center rounded text-xs text-gray-500 hover:bg-gray-100'
 
-export const CategoryNav = ({ isAdmin }: CategoryNavProps) => {
+export const CategoryNav = () => {
   const pathname = usePathname()
   const segment = pathname.split('/')[1] ?? ''
   const postType = SEGMENT_POST_TYPE[segment]
 
   if (!postType) return null
 
-  return <CategoryNavList segment={segment} postType={postType} isAdmin={isAdmin} />
+  return <CategoryNavList segment={segment} postType={postType} />
 }
 
 interface CategoryNavListProps {
   segment: string
   postType: CategoryPostType
-  isAdmin: boolean
 }
 
-const CategoryNavList = ({ segment, postType, isAdmin }: CategoryNavListProps) => {
+const CategoryNavList = ({ segment, postType }: CategoryNavListProps) => {
+  const isAdmin = useIsAdmin()
   const searchParams = useSearchParams()
   const activeSlug = searchParams.get('category')
 

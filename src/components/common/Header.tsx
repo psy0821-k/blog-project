@@ -2,16 +2,14 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { signOut } from 'next-auth/react'
 import { Menu, X } from 'lucide-react'
 
-import { useIsAdmin } from '@/hooks/use-admin-session'
+import AdminStatus from '@/components/common/AdminStatus'
 import { MainMenu } from '@/lib/main-menu'
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isResizing, setIsResizing] = useState(false)
-  const isAdmin = useIsAdmin()
 
   const closeMenu = () => {
     setIsMenuOpen(false)
@@ -79,19 +77,7 @@ const Header = () => {
             ))}
           </ul>
 
-          {isAdmin && (
-            <div className="border-t border-gray-100 p-4 sm:flex sm:items-center sm:gap-2 sm:border-0 sm:p-0 sm:text-sm">
-              <p className="mb-2 text-sm sm:mb-0">관리자님 안녕하세요</p>
-
-              <button
-                type="button"
-                className="rounded px-2 py-1 text-sm hover:bg-gray-100"
-                onClick={() => signOut({ redirectTo: '/' })}
-              >
-                로그아웃
-              </button>
-            </div>
-          )}
+          <AdminStatus />
         </nav>
 
         <button
