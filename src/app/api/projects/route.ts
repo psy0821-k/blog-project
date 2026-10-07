@@ -1,11 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireAdmin } from '@/lib/api-auth'
-import { forbiddenResponse, invalidJsonResponse, validationErrorResponse } from '@/lib/api-response'
+import {
+  conflictResponse,
+  forbiddenResponse,
+  invalidJsonResponse,
+  validationErrorResponse,
+} from '@/lib/api-response'
 import { validateCategoryForType } from '@/lib/category'
 import { inferMediaType } from '@/lib/media'
 import { getPublishedPostList } from '@/lib/post-list'
 import { createProjectSchema } from '@/lib/post-schema'
-import { prisma } from '@/lib/prisma'
+import { isUniqueConstraintError, prisma } from '@/lib/prisma'
 import { generateSlug } from '@/lib/slug'
 import type { Prisma } from '@/generated/prisma/client'
 
@@ -44,7 +49,8 @@ export async function POST(request: NextRequest) {
     return validationErrorResponse(parsed.error)
   }
 
-  const { title, content, thumbnailUrl, metaTitle, metaDescription, published, mediaUrls, categoryId } = parsed.data
+  const { slug, title, content, thumbnailUrl, metaTitle, metaDescription, published, mediaUrls, categoryId } =
+    parsed.data
 
   const invalidCategory = await validateCategoryForType(categoryId, 'PROJECT')
 
@@ -52,34 +58,44 @@ export async function POST(request: NextRequest) {
     return invalidCategory
   }
 
-  const project = await prisma.$transaction(async (tx) => {
-    const created = await tx.post.create({
-      data: {
-        type: 'PROJECT',
-        title,
-        slug: generateSlug(title),
-        content,
-        thumbnailUrl,
-        metaTitle,
-        metaDescription,
-        published,
-        categoryId,
-        authorId: admin.userId,
-      },
-    })
+  let project
 
-    if (mediaUrls?.length) {
-      await tx.media.createMany({
-        data: mediaUrls.map((url) => ({
-          postId: created.id,
-          url,
-          type: inferMediaType(url),
-        })),
+  try {
+    project = await prisma.$transaction(async (tx) => {
+      const created = await tx.post.create({
+        data: {
+          type: 'PROJECT',
+          title,
+          slug: slug ?? generateSlug(title),
+          content,
+          thumbnailUrl,
+          metaTitle,
+          metaDescription,
+          published,
+          categoryId,
+          authorId: admin.userId,
+        },
       })
+
+      if (mediaUrls?.length) {
+        await tx.media.createMany({
+          data: mediaUrls.map((url) => ({
+            postId: created.id,
+            url,
+            type: inferMediaType(url),
+          })),
+        })
+      }
+
+      return created
+    })
+  } catch (error) {
+    if (isUniqueConstraintError(error)) {
+      return conflictResponse('이미 사용 중인 slug입니다.')
     }
 
-    return created
-  })
+    throw error
+  }
 
   return NextResponse.json(project, { status: 201 })
 }
