@@ -1,6 +1,6 @@
 import { upload } from '@imagekit/next'
 import { useCallback, useState } from 'react'
-import { validateMediaFile } from '@/lib/media-validation'
+import { validateMediaFile, type MediaPurpose } from '@/lib/media-validation'
 
 const UPLOAD_AUTH_URL = '/api/media/upload-auth'
 const MEDIA_API_URL = '/api/media'
@@ -19,7 +19,7 @@ export interface UploadedMedia {
 }
 
 interface UseMediaUploadResult {
-  uploadFile: (file: File) => Promise<UploadedMedia>
+  uploadFile: (file: File, purpose?: MediaPurpose) => Promise<UploadedMedia>
   deleteFile: (fileId: string) => Promise<void>
   isUploading: boolean
   error: string | null
@@ -44,10 +44,10 @@ export function useMediaUpload(): UseMediaUploadResult {
   const [isUploading, setIsUploading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const uploadFile = useCallback(async (file: File): Promise<UploadedMedia> => {
+  const uploadFile = useCallback(async (file: File, purpose?: MediaPurpose): Promise<UploadedMedia> => {
     setError(null)
 
-    const validationError = validateMediaFile(file)
+    const validationError = validateMediaFile(file, purpose)
 
     if (validationError) {
       setError(validationError)

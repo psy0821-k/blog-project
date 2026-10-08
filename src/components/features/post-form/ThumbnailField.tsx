@@ -4,13 +4,15 @@ import { useState, type ChangeEvent } from 'react'
 import Image from 'next/image'
 
 import { useMediaUpload, type UploadedMedia } from '@/hooks/use-media-upload'
+import { MAX_THUMBNAIL_VIDEO_SIZE_BYTES, isVideoUrl } from '@/lib/media-validation'
 
 interface ThumbnailFieldProps {
   value: UploadedMedia | null
   onChange: (thumbnail: UploadedMedia | null) => void
 }
 
-const ACCEPTED_IMAGE_TYPES = 'image/jpeg,image/png,image/webp,image/gif'
+const ACCEPTED_THUMBNAIL_TYPES = 'image/jpeg,image/png,image/webp,video/mp4,video/webm'
+const MAX_THUMBNAIL_VIDEO_MB = MAX_THUMBNAIL_VIDEO_SIZE_BYTES / 1024 / 1024
 
 // 썸네일 선택·미리보기. 교체하거나 지우면 이전에 올린 파일은 ImageKit에서도 삭제한다.
 const ThumbnailField = ({ value, onChange }: ThumbnailFieldProps) => {
@@ -25,7 +27,7 @@ const ThumbnailField = ({ value, onChange }: ThumbnailFieldProps) => {
     try {
       await deleteFile(value.fileId)
     } catch {
-      setDeleteError('이전 이미지를 삭제하지 못했습니다.')
+      setDeleteError('이전 파일을 삭제하지 못했습니다.')
     }
   }
 
@@ -36,7 +38,7 @@ const ThumbnailField = ({ value, onChange }: ThumbnailFieldProps) => {
     if (!file) return
 
     try {
-      const uploaded = await uploadFile(file)
+      const uploaded = await uploadFile(file, 'thumbnail')
 
       await removePrevious()
       onChange(uploaded)
@@ -60,13 +62,25 @@ const ThumbnailField = ({ value, onChange }: ThumbnailFieldProps) => {
 
       {value && (
         <div className="aspect-video w-full max-w-xs bg-black">
-          <Image
-            src={value.url}
-            alt="선택한 썸네일 미리보기"
-            width={300}
-            height={200}
-            className="h-full w-full object-contain"
-          />
+          {isVideoUrl(value.url) ? (
+            <video
+              src={value.url}
+              aria-label="선택한 썸네일 영상 미리보기"
+              controls
+              muted
+              playsInline
+              preload="metadata"
+              className="h-full w-full object-contain"
+            />
+          ) : (
+            <Image
+              src={value.url}
+              alt="선택한 썸네일 미리보기"
+              width={300}
+              height={200}
+              className="h-full w-full object-contain"
+            />
+          )}
         </div>
       )}
 
@@ -74,7 +88,7 @@ const ThumbnailField = ({ value, onChange }: ThumbnailFieldProps) => {
         <input
           id="post-thumbnail"
           type="file"
-          accept={ACCEPTED_IMAGE_TYPES}
+          accept={ACCEPTED_THUMBNAIL_TYPES}
           disabled={isUploading}
           onChange={handleSelect}
           className="text-sm"
@@ -91,6 +105,9 @@ const ThumbnailField = ({ value, onChange }: ThumbnailFieldProps) => {
         )}
       </div>
 
+      <p className="text-xs text-gray-500">
+        이미지(5MB 이하) 또는 짧은 영상(mp4/webm, {MAX_THUMBNAIL_VIDEO_MB}MB 이하)을 올릴 수 있습니다.
+      </p>
       {isUploading && <p className="text-xs text-gray-500">업로드 중...</p>}
       {message && (
         <p role="alert" className="text-xs text-red-600">
