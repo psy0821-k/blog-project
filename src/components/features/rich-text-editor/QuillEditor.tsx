@@ -51,6 +51,7 @@ const QuillEditor = ({ value, onChange, placeholder }: QuillEditorProps) => {
       <EditorToolbar id={toolbarId} />
 
       <ReactQuill
+        className="h-100"
         ref={editorRef}
         theme="snow"
         value={value}
