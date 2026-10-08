@@ -1,6 +1,8 @@
 import { cache } from 'react'
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import AdminGuard from '@/components/common/AdminGuard'
 import { getPublishedPostBySlug, incrementPostViewCount } from '@/lib/post-detail'
 import { sanitizePostHtml } from '@/lib/sanitize-post-html'
 import { optimizePostHtml } from '@/lib/optimize-post-html'
@@ -50,11 +52,14 @@ const ProjectDetailPage = async ({ params }: ProjectDetailPageProps) => {
     <article className="p-4">
       <header className="mb-8">
         <h1 className="text-2xl font-bold">{project.title}</h1>
+        <AdminGuard>
+          <Link href={`/projects/${encodeURIComponent(project.slug)}/edit`}>수정</Link>
+        </AdminGuard>
         <p className="mt-2 text-sm text-gray-500">
           <time dateTime={project.createdAt.toISOString()}>
             {project.createdAt.toLocaleDateString('ko-KR')}
           </time>
-          <span aria-hidden="true"> · </span>
+          <span aria-hidden="true">| </span>
           조회 {project.viewCount}
         </p>
       </header>

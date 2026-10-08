@@ -6,15 +6,21 @@ import Image from 'next/image'
 import { useMediaUpload, type UploadedMedia } from '@/hooks/use-media-upload'
 import { MAX_THUMBNAIL_VIDEO_SIZE_BYTES, isVideoUrl } from '@/lib/media-validation'
 
+// 수정 화면에서 불러온 기존 썸네일은 fileId를 모르므로(DB에 URL만 저장) 선택값으로 둔다.
+export interface ThumbnailValue {
+  url: string
+  fileId?: string
+}
+
 interface ThumbnailFieldProps {
-  value: UploadedMedia | null
+  value: ThumbnailValue | null
   onChange: (thumbnail: UploadedMedia | null) => void
 }
 
 const ACCEPTED_THUMBNAIL_TYPES = 'image/jpeg,image/png,image/webp,video/mp4,video/webm'
 const MAX_THUMBNAIL_VIDEO_MB = MAX_THUMBNAIL_VIDEO_SIZE_BYTES / 1024 / 1024
 
-// 썸네일 선택·미리보기. 교체하거나 지우면 이전에 올린 파일은 ImageKit에서도 삭제한다.
+// 썸네일 선택 미리보기. 교체하거나 지우면 이전에 올린 파일은 ImageKit에서도 삭제한다.
 const ThumbnailField = ({ value, onChange }: ThumbnailFieldProps) => {
   const { uploadFile, deleteFile, isUploading, error } = useMediaUpload()
   const [deleteError, setDeleteError] = useState<string | null>(null)
@@ -22,7 +28,8 @@ const ThumbnailField = ({ value, onChange }: ThumbnailFieldProps) => {
   const removePrevious = async () => {
     setDeleteError(null)
 
-    if (!value) return
+    // 파일 ID가 없는 기존 썸네일은 ImageKit에서 지울 수 없어 그대로 둔다.
+    if (!value?.fileId) return
 
     try {
       await deleteFile(value.fileId)
@@ -43,7 +50,7 @@ const ThumbnailField = ({ value, onChange }: ThumbnailFieldProps) => {
       await removePrevious()
       onChange(uploaded)
     } catch {
-      // 업로드 실패 메시지는 useMediaUpload의 error로 표시되고, 기존 썸네일은 유지된다.
+      // 업로드 실패 시 기존 썸네일은 유지
     }
   }
 
@@ -106,7 +113,8 @@ const ThumbnailField = ({ value, onChange }: ThumbnailFieldProps) => {
       </div>
 
       <p className="text-xs text-gray-500">
-        이미지(5MB 이하) 또는 짧은 영상(mp4/webm, {MAX_THUMBNAIL_VIDEO_MB}MB 이하)을 올릴 수 있습니다.
+        이미지(5MB 이하) 또는 짧은 영상(mp4/webm, {MAX_THUMBNAIL_VIDEO_MB}MB 이하)을 올릴 수
+        있습니다.
       </p>
       {isUploading && <p className="text-xs text-gray-500">업로드 중...</p>}
       {message && (
