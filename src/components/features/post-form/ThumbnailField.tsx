@@ -98,8 +98,15 @@ const ThumbnailField = ({ value, onChange }: ThumbnailFieldProps) => {
           accept={ACCEPTED_THUMBNAIL_TYPES}
           disabled={isUploading}
           onChange={handleSelect}
-          className="text-sm"
+          className="peer sr-only"
         />
+        <label
+          htmlFor="post-thumbnail"
+          className="cursor-pointer rounded-lg border border-gray-300 px-4 py-2 text-sm hover:bg-gray-100 peer-focus-visible:ring-2 peer-focus-visible:ring-blue-500 peer-disabled:cursor-not-allowed peer-disabled:opacity-50"
+        >
+          파일 선택
+        </label>
+        {!value && <span className="text-xs text-gray-500">선택된 파일 없음</span>}
         {value && (
           <button
             type="button"
