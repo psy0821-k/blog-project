@@ -73,7 +73,6 @@ export async function POST(request: NextRequest) {
           metaDescription,
           published,
           categoryId,
-          authorId: admin.userId,
         },
       })
 
