@@ -3,43 +3,57 @@
 import { useState, type SubmitEvent } from 'react'
 import { useRouter } from 'next/navigation'
 
-import ThumbnailField from '@/components/features/post-form/ThumbnailField'
+import ThumbnailField, { type ThumbnailValue } from '@/components/features/post-form/ThumbnailField'
 import RichTextEditor from '@/components/features/rich-text-editor/RichTextEditor'
-import { useCategories, type CategoryPostType } from '@/hooks/use-categories'
+import { useCategories } from '@/hooks/use-categories'
 import { useCreatePost, type CreatePostType } from '@/hooks/use-create-post'
-import type { UploadedMedia } from '@/hooks/use-media-upload'
+import { useUpdatePost } from '@/hooks/use-update-post'
 import { createPostSchema, slugSchema } from '@/lib/post-schema'
+import { POST_TYPE_BY_ROUTE } from '@/lib/post-type'
+
+// 수정할 글. 주어지면 폼이 수정 모드로 동작한다.
+export interface EditablePost {
+  slug: string
+  title: string
+  content: string
+  thumbnailUrl: string | null
+  categoryId: string | null
+  metaTitle: string | null
+  metaDescription: string | null
+  published: boolean
+}
 
 interface PostFormProps {
   type: CreatePostType
   heading: string
-}
-
-// 작성 경로(type)와 서브메뉴(Category)의 글 종류 매핑
-const POST_TYPE_BY_ROUTE: Record<CreatePostType, CategoryPostType> = {
-  projects: 'PROJECT',
-  lab: 'LAB',
+  post?: EditablePost
 }
 
 const INPUT_CLASS = 'w-full rounded-lg border border-gray-300 px-4 py-2 text-sm'
 const LABEL_CLASS = 'text-sm font-semibold'
 const ERROR_CLASS = 'text-xs text-red-600'
 
-const PostForm = ({ type, heading }: PostFormProps) => {
+const PostForm = ({ type, heading, post }: PostFormProps) => {
   const router = useRouter()
-  const [title, setTitle] = useState('')
-  const [slug, setSlug] = useState('')
-  const [thumbnail, setThumbnail] = useState<UploadedMedia | null>(null)
-  const [categoryId, setCategoryId] = useState('')
-  const [content, setContent] = useState('')
-  const [metaTitle, setMetaTitle] = useState('')
-  const [metaDescription, setMetaDescription] = useState('')
-  const [published, setPublished] = useState(true)
+  const [title, setTitle] = useState(post?.title ?? '')
+  const [slug, setSlug] = useState(post?.slug ?? '')
+  const [thumbnail, setThumbnail] = useState<ThumbnailValue | null>(
+    post?.thumbnailUrl ? { url: post.thumbnailUrl } : null,
+  )
+  const [categoryId, setCategoryId] = useState(post?.categoryId ?? '')
+  const [content, setContent] = useState(post?.content ?? '')
+  const [metaTitle, setMetaTitle] = useState(post?.metaTitle ?? '')
+  const [metaDescription, setMetaDescription] = useState(post?.metaDescription ?? '')
+  const [published, setPublished] = useState(post?.published ?? true)
   const [titleError, setTitleError] = useState<string | null>(null)
   const [slugError, setSlugError] = useState<string | null>(null)
 
   const { data: categories = [] } = useCategories(POST_TYPE_BY_ROUTE[type])
-  const { mutate, isPending, error } = useCreatePost(type)
+  const create = useCreatePost(type)
+  // 수정 모드가 아니면 slug는 쓰이지 않는다.
+  const update = useUpdatePost(type, post?.slug ?? '')
+  const isPending = create.isPending || update.isPending
+  const error = create.error ?? update.error
 
   const handleSubmit = (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -47,16 +61,33 @@ const PostForm = ({ type, heading }: PostFormProps) => {
     // 서버와 같은 스키마로 검사해, 틀리면 요청을 보내지 않는다.
     const isTitleValid = createPostSchema.shape.title.safeParse(title).success
     // slug는 비워 두면 서버가 제목으로 생성하므로, 입력했을 때만 형식을 검사한다.
-    const isSlugValid = !slug.trim() || slugSchema.safeParse(slug).success
+    const isSlugValid = Boolean(post) || !slug.trim() || slugSchema.safeParse(slug).success
 
     setTitleError(isTitleValid ? null : '제목을 입력하세요.')
     setSlugError(
-      isSlugValid ? null : '글자·숫자를 하이픈(-)으로 이어서 입력하세요. (예: my-first-post)',
+      isSlugValid ? null : '글자 숫자를 하이픈(-)으로 이어서 입력하세요. (예: my-first-post)',
     )
 
     if (!isTitleValid || !isSlugValid) return
 
-    mutate(
+    // 수정: 비운 값은 null로 보내 기존 값을 지운다. slug는 바꿀 수 없다.
+    if (post) {
+      update.mutate(
+        {
+          title,
+          content,
+          published,
+          categoryId: categoryId || null,
+          thumbnailUrl: thumbnail?.url ?? null,
+          metaTitle: metaTitle.trim() || null,
+          metaDescription: metaDescription.trim() || null,
+        },
+        { onSuccess: () => router.push(`/${type}/${encodeURIComponent(post.slug)}`) },
+      )
+      return
+    }
+
+    create.mutate(
       {
         title,
         content,
@@ -96,15 +127,21 @@ const PostForm = ({ type, heading }: PostFormProps) => {
 
       <div className="flex flex-col gap-2">
         <label htmlFor="post-slug" className={LABEL_CLASS}>
-          slug <span className="font-normal text-gray-500">(비우면 제목으로 자동 생성)</span>
+          slug{' '}
+          <span className="font-normal text-gray-500">
+            {post ? '(수정할 수 없습니다)' : '(비우면 제목으로 자동 생성)'}
+          </span>
         </label>
         <input
           id="post-slug"
+
           value={slug}
           onChange={(event) => setSlug(event.target.value)}
+          readOnly={Boolean(post)}
           aria-invalid={Boolean(slugError)}
           aria-describedby={slugError ? 'post-slug-error' : undefined}
-          className={INPUT_CLASS}
+          className={post ? `bg-gray-200 text-gray-700  ${INPUT_CLASS}` : INPUT_CLASS}
+          tabIndex={post ? -1 : undefined}
         />
         {slugError && (
           <p id="post-slug-error" role="alert" className={ERROR_CLASS}>

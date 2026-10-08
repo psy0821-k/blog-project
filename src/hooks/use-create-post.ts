@@ -14,7 +14,7 @@ export interface CreatedPost {
   account: number
 }
 
-interface ApiErrorBody {
+export interface ApiErrorBody {
   error?: { message?: string }
 }
 
