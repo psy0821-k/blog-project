@@ -8,7 +8,7 @@ import RichTextEditor from '@/components/features/rich-text-editor/RichTextEdito
 import { useCategories, type CategoryPostType } from '@/hooks/use-categories'
 import { useCreatePost, type CreatePostType } from '@/hooks/use-create-post'
 import type { UploadedMedia } from '@/hooks/use-media-upload'
-import { createProjectSchema, slugSchema } from '@/lib/post-schema'
+import { createPostSchema, slugSchema } from '@/lib/post-schema'
 
 interface PostFormProps {
   type: CreatePostType
@@ -45,7 +45,7 @@ const PostForm = ({ type, heading }: PostFormProps) => {
     event.preventDefault()
 
     // 서버와 같은 스키마로 검사해, 틀리면 요청을 보내지 않는다.
-    const isTitleValid = createProjectSchema.shape.title.safeParse(title).success
+    const isTitleValid = createPostSchema.shape.title.safeParse(title).success
     // slug는 비워 두면 서버가 제목으로 생성하므로, 입력했을 때만 형식을 검사한다.
     const isSlugValid = !slug.trim() || slugSchema.safeParse(slug).success
 

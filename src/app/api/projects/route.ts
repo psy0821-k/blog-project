@@ -9,7 +9,7 @@ import {
 import { validateCategoryForType } from '@/lib/category'
 import { inferMediaType } from '@/lib/media'
 import { getPublishedPostList } from '@/lib/post-list'
-import { createProjectSchema } from '@/lib/post-schema'
+import { createPostSchema } from '@/lib/post-schema'
 import { isUniqueConstraintError, prisma } from '@/lib/prisma'
 import { generateSlug } from '@/lib/slug'
 import type { Prisma } from '@/generated/prisma/client'
@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
     return invalidJsonResponse()
   }
 
-  const parsed = createProjectSchema.safeParse(body)
+  const parsed = createPostSchema.safeParse(body)
 
   if (!parsed.success) {
     return validationErrorResponse(parsed.error)
