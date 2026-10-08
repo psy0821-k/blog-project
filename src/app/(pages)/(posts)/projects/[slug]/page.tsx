@@ -4,13 +4,19 @@ import { notFound } from 'next/navigation'
 import { getPublishedPostBySlug, incrementPostViewCount } from '@/lib/post-detail'
 import { sanitizePostHtml } from '@/lib/sanitize-post-html'
 import { optimizePostHtml } from '@/lib/optimize-post-html'
+import { decodeSlugParam } from '@/lib/slug'
 
 interface ProjectDetailPageProps {
   params: Promise<{ slug: string }>
 }
 
 // generateMetadata와 페이지가 같은 글을 쓰므로, 한 요청 안에서 DB 조회를 1번만 하도록 캐시한다.
-const getProject = cache((slug: string) => getPublishedPostBySlug('PROJECT', slug))
+// 한글 slug는 params에 인코딩된 채로 들어오므로 디코딩한 값으로 조회한다.
+const getProject = cache(async (slug: string) => {
+  const decodedSlug = decodeSlugParam(slug)
+
+  return decodedSlug ? getPublishedPostBySlug('PROJECT', decodedSlug) : null
+})
 
 export async function generateMetadata({ params }: ProjectDetailPageProps): Promise<Metadata> {
   const { slug } = await params
