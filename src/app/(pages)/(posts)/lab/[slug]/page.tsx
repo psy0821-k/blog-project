@@ -1,3 +1,5 @@
+import AdminGuard from '@/components/common/AdminGuard'
+import DeletePostButton from '@/components/features/post-form/DeletePostButton'
 import { optimizePostHtml } from '@/lib/optimize-post-html'
 import { getPublishedPostBySlug, incrementPostViewCount } from '@/lib/post-detail'
 import { sanitizePostHtml } from '@/lib/sanitize-post-html'
@@ -46,6 +48,9 @@ const LabDetailPage = async ({ params }: LabDetailProps) => {
     <article className="p-4">
       <header className="mb-8">
         <h1 className="text-2xl font-bold">{lab.title}</h1>
+        <AdminGuard>
+          <DeletePostButton type="lab" slug={lab.slug} />
+        </AdminGuard>
         <p className="mt-2 text-sm text-gray-500">
           <time dateTime={lab.createdAt.toISOString()}>
             {lab.createdAt.toLocaleDateString('ko-KR')}

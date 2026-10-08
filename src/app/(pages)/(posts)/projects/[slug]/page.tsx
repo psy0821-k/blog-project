@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import AdminGuard from '@/components/common/AdminGuard'
+import DeletePostButton from '@/components/features/post-form/DeletePostButton'
 import { getPublishedPostBySlug, incrementPostViewCount } from '@/lib/post-detail'
 import { sanitizePostHtml } from '@/lib/sanitize-post-html'
 import { optimizePostHtml } from '@/lib/optimize-post-html'
@@ -54,6 +55,7 @@ const ProjectDetailPage = async ({ params }: ProjectDetailPageProps) => {
         <h1 className="text-2xl font-bold">{project.title}</h1>
         <AdminGuard>
           <Link href={`/projects/${encodeURIComponent(project.slug)}/edit`}>수정</Link>
+          <DeletePostButton type="projects" slug={project.slug} />
         </AdminGuard>
         <p className="mt-2 text-sm text-gray-500">
           <time dateTime={project.createdAt.toISOString()}>
