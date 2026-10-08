@@ -2,6 +2,8 @@
 .img-sm,
 .img-md,
 .img-lg {
+  display: inline-block;
+  vertical-align: bottom;
   height: auto;
   max-width: 100%;
 }
