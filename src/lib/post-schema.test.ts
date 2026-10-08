@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { createProjectSchema, slugSchema } from './post-schema'
+import { createPostSchema, slugSchema } from './post-schema'
 
 describe('slugSchema', () => {
   it.each(['my-first-post', 'post1', '첫-번째-글', 'Mixed-Case'])('%s는 허용한다', (value) => {
@@ -19,14 +19,14 @@ describe('slugSchema', () => {
   )
 })
 
-describe('createProjectSchema slug', () => {
+describe('createPostSchema slug', () => {
   const base = { title: '제목', content: '', published: true }
 
   it('slug를 생략해도 통과한다', () => {
-    expect(createProjectSchema.safeParse(base).success).toBe(true)
+    expect(createPostSchema.safeParse(base).success).toBe(true)
   })
 
   it('형식이 맞지 않는 slug는 거부한다', () => {
-    expect(createProjectSchema.safeParse({ ...base, slug: 'has space' }).success).toBe(false)
+    expect(createPostSchema.safeParse({ ...base, slug: 'has space' }).success).toBe(false)
   })
 })
