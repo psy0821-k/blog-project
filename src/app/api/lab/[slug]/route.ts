@@ -4,7 +4,7 @@ import { forbiddenResponse, invalidJsonResponse, notFoundResponse, validationErr
 import { validateCategoryForType } from '@/lib/category'
 import { inferMediaType } from '@/lib/media'
 import { getPublishedPostBySlug } from '@/lib/post-detail'
-import { updateLabSchema } from '@/lib/post-schema'
+import { updatePostSchema } from '@/lib/post-schema'
 import { isRecordNotFoundError, prisma } from '@/lib/prisma'
 
 interface RouteParams {
@@ -39,7 +39,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     return invalidJsonResponse()
   }
 
-  const parsed = updateLabSchema.safeParse(body)
+  const parsed = updatePostSchema.safeParse(body)
 
   if (!parsed.success) {
     return validationErrorResponse(parsed.error)
