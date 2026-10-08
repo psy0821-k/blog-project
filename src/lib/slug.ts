@@ -1,6 +1,18 @@
 import { randomUUID } from 'node:crypto'
 
 /**
+ * 페이지 params로 받은 slug를 디코딩한다. 한글 slug는 퍼센트 인코딩된 채로 들어온다.
+ * 잘못된 인코딩(예: %E3)이면 예외 대신 null을 반환한다.
+ */
+export function decodeSlugParam(slug: string): string | null {
+  try {
+    return decodeURIComponent(slug)
+  } catch {
+    return null
+  }
+}
+
+/**
  * title로부터 URL-safe한 slug를 생성한다.
  * 한글 등 영숫자가 아닌 문자는 slug에 남기 어려워(공백 치환만으로는 URL-safe가 보장되지 않음)
  * 유일성 보장을 위해 uuid 일부를 접미사로 붙인다.
