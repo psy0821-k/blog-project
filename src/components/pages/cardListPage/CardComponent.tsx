@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { isVideoUrl } from '@/lib/media-validation'
+import CardVideo from './CardVideo'
 
 interface CardProps {
   thumbnailUrl: string | null
@@ -14,16 +15,7 @@ export const CardComponent = ({ thumbnailUrl, title, href }: CardProps) => {
       <Link href={href}>
         <div className="aspect-video bg-black">
           {thumbnailUrl && isVideoUrl(thumbnailUrl) ? (
-            // 메타데이터만 받아 첫 프레임을 정지 이미지처럼 보여준다. 재생은 하지 않는다.
-            <video
-              src={`${thumbnailUrl}#t=0.001`}
-              muted
-              playsInline
-              preload="metadata"
-              aria-hidden
-              tabIndex={-1}
-              className="w-full h-full object-contain"
-            />
+            <CardVideo src={thumbnailUrl} />
           ) : (
             <Image
               src={thumbnailUrl || '/fallback.webp'}
