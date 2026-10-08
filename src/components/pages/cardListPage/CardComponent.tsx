@@ -1,5 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
+import { isVideoUrl } from '@/lib/media-validation'
+import CardVideo from './CardVideo'
 
 interface CardProps {
   thumbnailUrl: string | null
@@ -12,14 +14,18 @@ export const CardComponent = ({ thumbnailUrl, title, href }: CardProps) => {
     <article>
       <Link href={href}>
         <div className="aspect-video bg-black">
-          <Image
-            src={thumbnailUrl || '/fallback.webp'}
-            alt=""
-            width={300}
-            height={200}
-            aria-hidden
-            className="w-full h-full object-contain"
-          ></Image>
+          {thumbnailUrl && isVideoUrl(thumbnailUrl) ? (
+            <CardVideo src={thumbnailUrl} />
+          ) : (
+            <Image
+              src={thumbnailUrl || '/fallback.webp'}
+              alt=""
+              width={300}
+              height={200}
+              aria-hidden
+              className="w-full h-full object-contain"
+            ></Image>
+          )}
         </div>
         <h3 className="text-[18px] font-medium">{title}</h3>
       </Link>
