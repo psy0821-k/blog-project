@@ -5,7 +5,6 @@ export const ALLOWED_CONTENT_TYPES = [
   'image/jpeg',
   'image/png',
   'image/webp',
-  'image/gif',
   'video/mp4',
   'video/webm',
 ]
@@ -22,7 +21,7 @@ export const VIDEO_OPTIMIZATION_HINT = '업로드 전에 mp4(H.264), 해상도 7
  */
 export function validateMediaFile(file: File): string | null {
   if (!ALLOWED_CONTENT_TYPES.includes(file.type)) {
-    return '지원하지 않는 파일 형식입니다. (이미지: jpeg/png/webp/gif, 동영상: mp4/webm)'
+    return '지원하지 않는 파일 형식입니다. (이미지: jpeg/png/webp, 동영상: mp4/webm)'
   }
 
   const isVideo = file.type.startsWith('video/')

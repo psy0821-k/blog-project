@@ -5,7 +5,7 @@ import { askDescription, askImageGap, askText, getAnchorAtIndex } from './editor
 import { insertImage, insertVideo, pickFile, type InsertMedia } from './editor-media-insert'
 import { IMAGE_GAP_FORMAT_NAME } from './image-gap-format'
 
-const IMAGE_ACCEPT = 'image/jpeg,image/png,image/webp,image/gif'
+const IMAGE_ACCEPT = 'image/jpeg,image/png,image/webp'
 const VIDEO_ACCEPT = 'video/mp4,video/webm'
 const YOUTUBE_EMBED_FORMAT = 'video'
 

@@ -10,7 +10,7 @@ interface ThumbnailFieldProps {
   onChange: (thumbnail: UploadedMedia | null) => void
 }
 
-const ACCEPTED_IMAGE_TYPES = 'image/jpeg,image/png,image/webp,image/gif'
+const ACCEPTED_IMAGE_TYPES = 'image/jpeg,image/png,image/webp'
 
 // 썸네일 선택·미리보기. 교체하거나 지우면 이전에 올린 파일은 ImageKit에서도 삭제한다.
 const ThumbnailField = ({ value, onChange }: ThumbnailFieldProps) => {
