@@ -12,6 +12,7 @@ import { getPublishedPostList } from '@/lib/post-list'
 import { createPostSchema } from '@/lib/post-schema'
 import { isUniqueConstraintError, prisma } from '@/lib/prisma'
 import { generateSlug } from '@/lib/slug'
+import { replacePostTags } from '@/lib/tag'
 import type { Prisma } from '@/generated/prisma/client'
 
 const PROJECT_LIST_SELECT = {
@@ -50,7 +51,7 @@ export async function POST(request: NextRequest) {
     return validationErrorResponse(parsed.error)
   }
 
-  const { slug, title, content, thumbnailUrl, metaTitle, metaDescription, published, mediaUrls, categoryId, status } =
+  const { slug, title, content, thumbnailUrl, metaTitle, metaDescription, published, mediaUrls, categoryId, status, tags } =
     parsed.data
 
   const invalidCategory = await validateCategoryForType(categoryId, 'PROJECT')
@@ -86,6 +87,10 @@ export async function POST(request: NextRequest) {
             type: inferMediaType(url),
           })),
         })
+      }
+
+      if (tags?.length) {
+        await replacePostTags(tx, created.id, tags)
       }
 
       return created

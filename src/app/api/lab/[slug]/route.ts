@@ -6,6 +6,7 @@ import { inferMediaType } from '@/lib/media'
 import { getPublishedPostBySlug } from '@/lib/post-detail'
 import { updatePostSchema } from '@/lib/post-schema'
 import { isRecordNotFoundError, prisma } from '@/lib/prisma'
+import { replacePostTags } from '@/lib/tag'
 
 interface RouteParams {
   params: Promise<{ slug: string }>
@@ -57,7 +58,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     return invalidCategory
   }
 
-  const { mediaUrls, ...postData } = parsed.data
+  const { mediaUrls, tags, ...postData } = parsed.data
 
   try {
     const lab = await prisma.$transaction(async (tx) => {
@@ -78,6 +79,10 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
             })),
           })
         }
+      }
+
+      if (tags !== undefined) {
+        await replacePostTags(tx, existing.id, tags)
       }
 
       return updated
