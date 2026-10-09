@@ -40,7 +40,7 @@ const PostEditPage = async ({ type, slug, heading }: PostEditPageProps) => {
             metaTitle: post.metaTitle,
             metaDescription: post.metaDescription,
             published: post.published,
-          }}
+            status: post.status,          }}
         />
       </AdminGuard>
     </main>

@@ -1,5 +1,6 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import type { PaginationMeta } from '@/lib/pagination'
+import type { PostStatus } from '@/lib/post-status'
 
 export type PostListType = 'projects' | 'lab' | 'devlog'
 
@@ -8,6 +9,7 @@ export interface PostListItem {
   title: string
   slug: string
   thumbnailUrl?: string | null
+  status: PostStatus
   viewCount: number
   createdAt: string
   updatedAt: string

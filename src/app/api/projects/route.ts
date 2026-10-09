@@ -19,6 +19,7 @@ const PROJECT_LIST_SELECT = {
   title: true,
   slug: true,
   thumbnailUrl: true,
+  status: true,
   viewCount: true,
   createdAt: true,
   updatedAt: true,
@@ -49,7 +50,7 @@ export async function POST(request: NextRequest) {
     return validationErrorResponse(parsed.error)
   }
 
-  const { slug, title, content, thumbnailUrl, metaTitle, metaDescription, published, mediaUrls, categoryId } =
+  const { slug, title, content, thumbnailUrl, metaTitle, metaDescription, published, mediaUrls, categoryId, status } =
     parsed.data
 
   const invalidCategory = await validateCategoryForType(categoryId, 'PROJECT')
@@ -73,6 +74,7 @@ export async function POST(request: NextRequest) {
           metaDescription,
           published,
           categoryId,
+          status,
         },
       })
 

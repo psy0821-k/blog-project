@@ -9,6 +9,7 @@ import { useCategories } from '@/hooks/use-categories'
 import { useCreatePost, type CreatePostType } from '@/hooks/use-create-post'
 import { useUpdatePost } from '@/hooks/use-update-post'
 import { createPostSchema, slugSchema } from '@/lib/post-schema'
+import { POST_STATUS_LABEL, type PostStatus } from '@/lib/post-status'
 import { POST_TYPE_BY_ROUTE } from '@/lib/post-type'
 
 // 수정할 글. 주어지면 폼이 수정 모드로 동작한다.
@@ -21,6 +22,7 @@ export interface EditablePost {
   metaTitle: string | null
   metaDescription: string | null
   published: boolean
+  status: PostStatus
 }
 
 interface PostFormProps {
@@ -45,6 +47,7 @@ const PostForm = ({ type, heading, post }: PostFormProps) => {
   const [metaTitle, setMetaTitle] = useState(post?.metaTitle ?? '')
   const [metaDescription, setMetaDescription] = useState(post?.metaDescription ?? '')
   const [published, setPublished] = useState(post?.published ?? true)
+  const [status, setStatus] = useState<PostStatus>(post?.status ?? 'IN_PROGRESS')
   const [titleError, setTitleError] = useState<string | null>(null)
   const [slugError, setSlugError] = useState<string | null>(null)
 
@@ -77,6 +80,7 @@ const PostForm = ({ type, heading, post }: PostFormProps) => {
           title,
           content,
           published,
+          status,
           categoryId: categoryId || null,
           thumbnailUrl: thumbnail?.url ?? null,
           metaTitle: metaTitle.trim() || null,
@@ -92,6 +96,7 @@ const PostForm = ({ type, heading, post }: PostFormProps) => {
         title,
         content,
         published,
+        status,
         slug: slug.trim() || undefined,
         categoryId: categoryId || undefined,
         thumbnailUrl: thumbnail?.url,
@@ -166,6 +171,24 @@ const PostForm = ({ type, heading, post }: PostFormProps) => {
           {categories.map((category) => (
             <option key={category.id} value={category.id}>
               {category.name}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <label htmlFor="post-status" className={LABEL_CLASS}>
+          진행 상태
+        </label>
+        <select
+          id="post-status"
+          value={status}
+          onChange={(event) => setStatus(event.target.value as PostStatus)}
+          className={INPUT_CLASS}
+        >
+          {Object.entries(POST_STATUS_LABEL).map(([value, label]) => (
+            <option key={value} value={value}>
+              {label}
             </option>
           ))}
         </select>

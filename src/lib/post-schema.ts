@@ -9,7 +9,11 @@ export const slugSchema = z
   .max(100)
   .regex(/^[\p{L}\p{N}]+(?:-[\p{L}\p{N}]+)*$/u)
 
+export const postStatusSchema = z.enum(['IN_PROGRESS', 'COMPLETED'])
+
 export const createPostSchema = z.object({
+  // 진행 상태. 생략하면 DB 기본값(COMPLETED)을 따른다.
+  status: postStatusSchema.optional(),
   // 직접 지정할 slug. 생략하면 서버가 제목으로 생성한다. 이미 있는 slug면 409를 반환한다.
   slug: slugSchema.optional(),
   // 서브메뉴(카테고리) 지정. 글 종류와 같은 type의 카테고리여야 한다.
@@ -25,6 +29,7 @@ export const createPostSchema = z.object({
 })
 
 export const updatePostSchema = z.object({
+  status: postStatusSchema.optional(),
   // 서브메뉴(카테고리) 변경. null은 미분류로 되돌린다.
   categoryId: z.string().uuid().nullable().optional(),
   title: z.string().trim().min(1).optional(),

@@ -35,7 +35,8 @@ export const ListWrapper = ({ type }: ListWrapperProps) => {
             <li key={post.id}>
               <CardComponent
                 title={post.title}
-                thumbnailUrl={post.thumbnailUrl}
+                thumbnailUrl={post.thumbnailUrl ?? null}
+                status={post.status}
                 href={`/${type}/${post.slug}`}
               />
             </li>
