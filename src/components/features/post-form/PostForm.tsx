@@ -39,6 +39,7 @@ const ERROR_CLASS = 'text-xs text-red-600'
 
 const PostForm = ({ type, heading, post }: PostFormProps) => {
   const router = useRouter()
+  const isDevlog = type === 'devlog'
   const [title, setTitle] = useState(post?.title ?? '')
   const [slug, setSlug] = useState(post?.slug ?? '')
   const [thumbnail, setThumbnail] = useState<ThumbnailValue | null>(
@@ -83,10 +84,8 @@ const PostForm = ({ type, heading, post }: PostFormProps) => {
           title,
           content,
           published,
-          status,
-          tags,
           categoryId: categoryId || null,
-          thumbnailUrl: thumbnail?.url ?? null,
+          ...(!isDevlog && { status, tags, thumbnailUrl: thumbnail?.url ?? null }),
           metaTitle: metaTitle.trim() || null,
           metaDescription: metaDescription.trim() || null,
         },
@@ -100,11 +99,9 @@ const PostForm = ({ type, heading, post }: PostFormProps) => {
         title,
         content,
         published,
-        status,
-        tags,
         slug: slug.trim() || undefined,
         categoryId: categoryId || undefined,
-        thumbnailUrl: thumbnail?.url,
+        ...(!isDevlog && { status, tags, thumbnailUrl: thumbnail?.url }),
         metaTitle: metaTitle.trim() || undefined,
         metaDescription: metaDescription.trim() || undefined,
       },
@@ -160,46 +157,49 @@ const PostForm = ({ type, heading, post }: PostFormProps) => {
         )}
       </div>
 
-      <ThumbnailField value={thumbnail} onChange={setThumbnail} />
+      {!isDevlog && <ThumbnailField value={thumbnail} onChange={setThumbnail} />}
 
-      <div className="flex flex-col gap-2">
-        <label htmlFor="post-category" className={LABEL_CLASS}>
-          서브메뉴
-        </label>
-        <select
-          id="post-category"
-          value={categoryId}
-          onChange={(event) => setCategoryId(event.target.value)}
-          className={INPUT_CLASS}
-        >
-          <option value="">미분류</option>
-          {categories.map((category) => (
-            <option key={category.id} value={category.id}>
-              {category.name}
-            </option>
-          ))}
-        </select>
-      </div>
+      {!isDevlog && (
+        <>
+          <div className="flex flex-col gap-2">
+            <label htmlFor="post-category" className={LABEL_CLASS}>
+              서브메뉴
+            </label>
+            <select
+              id="post-category"
+              value={categoryId}
+              onChange={(event) => setCategoryId(event.target.value)}
+              className={INPUT_CLASS}
+            >
+              <option value="">미분류</option>
+              {categories.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="flex flex-col gap-2">
+            <label htmlFor="post-status" className={LABEL_CLASS}>
+              진행 상태
+            </label>
+            <select
+              id="post-status"
+              value={status}
+              onChange={(event) => setStatus(event.target.value as PostStatus)}
+              className={INPUT_CLASS}
+            >
+              {Object.entries(POST_STATUS_LABEL).map(([value, label]) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
+            </select>
+          </div>
 
-      <div className="flex flex-col gap-2">
-        <label htmlFor="post-status" className={LABEL_CLASS}>
-          진행 상태
-        </label>
-        <select
-          id="post-status"
-          value={status}
-          onChange={(event) => setStatus(event.target.value as PostStatus)}
-          className={INPUT_CLASS}
-        >
-          {Object.entries(POST_STATUS_LABEL).map(([value, label]) => (
-            <option key={value} value={value}>
-              {label}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <TagInputField value={tags} onChange={setTags} />
+          <TagInputField value={tags} onChange={setTags} />
+        </>
+      )}
 
       <div className="flex flex-col gap-2">
         <label htmlFor="post-meta-title" className={LABEL_CLASS}>
