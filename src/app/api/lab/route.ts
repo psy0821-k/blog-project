@@ -14,6 +14,7 @@ const LAB_LIST_SELECT = {
   title: true,
   slug: true,
   thumbnailUrl: true,
+  status: true,
   viewCount: true,
   createdAt: true,
   updatedAt: true,
@@ -55,6 +56,7 @@ export async function POST(request: NextRequest) {
     published,
     mediaUrls,
     categoryId,
+    status,
   } = parsed.data
 
   const invalidCategory = await validateCategoryForType(categoryId, 'LAB')
@@ -78,6 +80,7 @@ export async function POST(request: NextRequest) {
           metaDescription,
           published,
           categoryId,
+          status,
         },
       })
 

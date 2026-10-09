@@ -1,4 +1,5 @@
 import AdminGuard from '@/components/common/AdminGuard'
+import PostStatusBadge from '@/components/common/PostStatusBadge'
 import DeletePostButton from '@/components/features/post-form/DeletePostButton'
 import { optimizePostHtml } from '@/lib/optimize-post-html'
 import { getPublishedPostBySlug, incrementPostViewCount } from '@/lib/post-detail'
@@ -48,7 +49,7 @@ const LabDetailPage = async ({ params }: LabDetailProps) => {
     <article className="p-4">
       <header className="mb-8">
         <h1 className="text-2xl font-bold">{lab.title}</h1>
-        <AdminGuard>
+        <PostStatusBadge status={lab.status} />        <AdminGuard>
           <DeletePostButton type="lab" slug={lab.slug} />
         </AdminGuard>
         <p className="mt-2 text-sm text-gray-500">

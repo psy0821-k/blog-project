@@ -25,6 +25,14 @@ enum PostType {
   DEV_LOG
 }
 
+/// 게시글 진행 상태 (Projects/Lab 안내용)
+enum PostStatus {
+  /// 진행중
+  IN_PROGRESS
+  /// 완료
+  COMPLETED
+}
+
 /// 미디어 파일 종류. URL만으로는 이미지/동영상을 안정적으로 구분할 수 없어(확장자 없는 CDN URL 등)
 /// 렌더링 분기(img/video 태그)와 업로드 처리
 /// 파이프라인 분기(이미지 전용 Sharp 처리)를 위해 명시적으로 저장한다.
@@ -76,6 +84,7 @@ model Post {
   slug         String   @unique
   thumbnailUrl String?
   content      String
+  status       PostStatus @default(COMPLETED)
 
   // 임시 저장 시에 사용
   published       Boolean @default(false)
