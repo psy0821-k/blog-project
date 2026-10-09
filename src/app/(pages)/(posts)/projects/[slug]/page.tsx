@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import AdminGuard from '@/components/common/AdminGuard'
 import PostStatusBadge from '@/components/common/PostStatusBadge'
+import TagList from '@/components/common/TagList'
 import DeletePostButton from '@/components/features/post-form/DeletePostButton'
 import { getPublishedPostBySlug, incrementPostViewCount } from '@/lib/post-detail'
 import { sanitizePostHtml } from '@/lib/sanitize-post-html'
@@ -54,7 +55,9 @@ const ProjectDetailPage = async ({ params }: ProjectDetailPageProps) => {
     <article className="p-4">
       <header className="mb-8">
         <h1 className="text-2xl font-bold">{project.title}</h1>
-        <PostStatusBadge status={project.status} />        <AdminGuard>
+        <PostStatusBadge status={project.status} />
+        <TagList tags={project.postTags.map(({ tag }) => tag.name)} />
+        <AdminGuard>
           <Link href={`/projects/${encodeURIComponent(project.slug)}/edit`}>수정</Link>
           <DeletePostButton type="projects" slug={project.slug} />
         </AdminGuard>

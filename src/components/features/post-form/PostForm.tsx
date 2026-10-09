@@ -3,6 +3,7 @@
 import { useState, type SubmitEvent } from 'react'
 import { useRouter } from 'next/navigation'
 
+import TagInputField from '@/components/features/post-form/TagInputField'
 import ThumbnailField, { type ThumbnailValue } from '@/components/features/post-form/ThumbnailField'
 import RichTextEditor from '@/components/features/rich-text-editor/RichTextEditor'
 import { useCategories } from '@/hooks/use-categories'
@@ -23,6 +24,7 @@ export interface EditablePost {
   metaDescription: string | null
   published: boolean
   status: PostStatus
+  tags: string[]
 }
 
 interface PostFormProps {
@@ -48,6 +50,7 @@ const PostForm = ({ type, heading, post }: PostFormProps) => {
   const [metaDescription, setMetaDescription] = useState(post?.metaDescription ?? '')
   const [published, setPublished] = useState(post?.published ?? true)
   const [status, setStatus] = useState<PostStatus>(post?.status ?? 'IN_PROGRESS')
+  const [tags, setTags] = useState<string[]>(post?.tags ?? [])
   const [titleError, setTitleError] = useState<string | null>(null)
   const [slugError, setSlugError] = useState<string | null>(null)
 
@@ -81,6 +84,7 @@ const PostForm = ({ type, heading, post }: PostFormProps) => {
           content,
           published,
           status,
+          tags,
           categoryId: categoryId || null,
           thumbnailUrl: thumbnail?.url ?? null,
           metaTitle: metaTitle.trim() || null,
@@ -97,6 +101,7 @@ const PostForm = ({ type, heading, post }: PostFormProps) => {
         content,
         published,
         status,
+        tags,
         slug: slug.trim() || undefined,
         categoryId: categoryId || undefined,
         thumbnailUrl: thumbnail?.url,
@@ -193,6 +198,8 @@ const PostForm = ({ type, heading, post }: PostFormProps) => {
           ))}
         </select>
       </div>
+
+      <TagInputField value={tags} onChange={setTags} />
 
       <div className="flex flex-col gap-2">
         <label htmlFor="post-meta-title" className={LABEL_CLASS}>

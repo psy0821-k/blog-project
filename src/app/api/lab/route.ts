@@ -7,6 +7,7 @@ import { createPostSchema } from '@/lib/post-schema'
 import { validateCategoryForType } from '@/lib/category'
 import { isUniqueConstraintError, prisma } from '@/lib/prisma'
 import { generateSlug } from '@/lib/slug'
+import { replacePostTags } from '@/lib/tag'
 import { inferMediaType } from '@/lib/media'
 
 const LAB_LIST_SELECT = {
@@ -57,6 +58,7 @@ export async function POST(request: NextRequest) {
     mediaUrls,
     categoryId,
     status,
+    tags,
   } = parsed.data
 
   const invalidCategory = await validateCategoryForType(categoryId, 'LAB')
@@ -93,6 +95,10 @@ export async function POST(request: NextRequest) {
           })),
         })
       }
+      if (tags?.length) {
+        await replacePostTags(tx, created.id, tags)
+      }
+
       return created
     })
   } catch (error) {

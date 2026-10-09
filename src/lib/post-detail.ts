@@ -13,6 +13,7 @@ export async function getPublishedPostBySlug(type: PostType, slug: string) {
       type,
       published: true,
     },
+    include: { postTags: { include: { tag: true } } },
   })
 }
 

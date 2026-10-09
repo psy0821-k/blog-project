@@ -11,7 +11,11 @@ export const slugSchema = z
 
 export const postStatusSchema = z.enum(['IN_PROGRESS', 'COMPLETED'])
 
+// 사용한 기술 등 글에 붙이는 태그 이름 목록. 중복·대소문자 차이는 서버가 slug 기준으로 정리한다.
+export const tagNamesSchema = z.array(z.string().trim().min(1).max(30)).max(20)
+
 export const createPostSchema = z.object({
+  tags: tagNamesSchema.optional(),
   // 진행 상태. 생략하면 DB 기본값(COMPLETED)을 따른다.
   status: postStatusSchema.optional(),
   // 직접 지정할 slug. 생략하면 서버가 제목으로 생성한다. 이미 있는 slug면 409를 반환한다.
@@ -29,6 +33,8 @@ export const createPostSchema = z.object({
 })
 
 export const updatePostSchema = z.object({
+  // 태그 전체 교체. 생략하면 기존 태그를 건드리지 않는다.
+  tags: tagNamesSchema.optional(),
   status: postStatusSchema.optional(),
   // 서브메뉴(카테고리) 변경. null은 미분류로 되돌린다.
   categoryId: z.string().uuid().nullable().optional(),
