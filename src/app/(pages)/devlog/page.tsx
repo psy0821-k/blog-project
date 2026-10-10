@@ -1,11 +1,14 @@
 import { Suspense } from 'react'
 import DevlogListWrapper from '@/components/pages/devlogListPage/DevlogListWrapper'
+import Link from 'next/link'
 
 const DevLogPage = () => {
   return (
     <main className="content">
       <h1>개발 일지</h1>
       <p>개발을 하면서 겪은 문제와 기록</p>
+
+      <Link href={'/devlog/write'}>글쓰기</Link>
 
       <Suspense fallback={<p>불러오는 중...</p>}>
         <DevlogListWrapper />

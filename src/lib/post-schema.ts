@@ -73,8 +73,19 @@ export const updateCategorySchema = z.object({
   order: z.number().int().min(0).optional(),
 })
 
+export const createDevLogSchema = z.object({
+  slug: slugSchema.optional(),
+  title: z.string().trim().min(1),
+  content: z.string(),
+  metaTitle: z.string().trim().optional(),
+  metaDescription: z.string().trim().optional(),
+  published: z.boolean(),
+  mediaUrls: z.array(z.url()).optional(),
+})
+
 export type CreateCategoryInput = z.infer<typeof createCategorySchema>
 export type UpdateCategoryInput = z.infer<typeof updateCategorySchema>
 export type CreatePostInput = z.infer<typeof createPostSchema>
 export type UpdatePostInput = z.infer<typeof updatePostSchema>
 export type UpdateDevLogInput = z.infer<typeof updateDevLogSchema>
+export type createDevLogInput = z.infer<typeof createDevLogSchema>
