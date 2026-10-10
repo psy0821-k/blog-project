@@ -18,13 +18,14 @@ export interface EditablePost {
   slug: string
   title: string
   content: string
-  thumbnailUrl: string | null
   categoryId: string | null
   metaTitle: string | null
   metaDescription: string | null
   published: boolean
-  status: PostStatus
-  tags: string[]
+  // 아래 필드는 devlog에서 쓰지 않으므로 생략할 수 있다.
+  thumbnailUrl?: string | null
+  status?: PostStatus
+  tags?: string[]
 }
 
 interface PostFormProps {

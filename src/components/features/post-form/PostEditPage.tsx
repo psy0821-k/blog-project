@@ -35,13 +35,15 @@ const PostEditPage = async ({ type, slug, heading }: PostEditPageProps) => {
             slug: post.slug,
             title: post.title,
             content: post.content,
-            thumbnailUrl: post.thumbnailUrl,
             categoryId: post.categoryId,
             metaTitle: post.metaTitle,
             metaDescription: post.metaDescription,
             published: post.published,
-            status: post.status,
-            tags: post.postTags.map(({ tag }) => tag.name),
+            ...(type !== 'devlog' && {
+              thumbnailUrl: post.thumbnailUrl,
+              status: post.status,
+              tags: post.postTags.map(({ tag }) => tag.name),
+            }),
           }}
         />
       </AdminGuard>
