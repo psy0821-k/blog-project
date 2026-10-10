@@ -5,4 +5,5 @@ import type { CreatePostType } from '@/hooks/use-create-post'
 export const POST_TYPE_BY_ROUTE: Record<CreatePostType, CategoryPostType> = {
   projects: 'PROJECT',
   lab: 'LAB',
+  devlog: 'DEV_LOG',
 }

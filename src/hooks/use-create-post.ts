@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import type { PostListType } from '@/hooks/use-post-list'
 import type { CreatePostInput } from '@/lib/post-schema'
 
-export type CreatePostType = Exclude<PostListType, 'devlog'>
+export type CreatePostType = PostListType
 
 export interface CreatedPost {
   id: string
