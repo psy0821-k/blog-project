@@ -5,6 +5,7 @@ import { getPublishedPostBySlug, incrementPostViewCount } from '@/lib/post-detai
 import { sanitizePostHtml } from '@/lib/sanitize-post-html'
 import { decodeSlugParam } from '@/lib/slug'
 import { Metadata } from 'next'
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { cache } from 'react'
 
@@ -52,6 +53,7 @@ const DevLogDetailPage = async ({ params }: DevLogDetailPageProps) => {
         <header className="mb-8">
           <h1 className="text-2xl font-bold">{devLog.title}</h1>
           <AdminGuard>
+            <Link href={`/devlog/${encodeURIComponent(devLog.slug)}/edit`}>수정</Link>
             <DeletePostButton type="devlog" slug={devLog.slug} />
           </AdminGuard>
           <p className="mt-2 text-sm text-gray-500">
