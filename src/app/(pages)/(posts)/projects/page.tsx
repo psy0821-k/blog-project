@@ -2,6 +2,7 @@ import { Suspense } from 'react'
 import ListWrapper from '@/components/pages/cardListPage/ListWrapper'
 import Link from 'next/link'
 import AdminGuard from '@/components/common/AdminGuard'
+import DraftToggle from '@/components/pages/cardListPage/DraftToggle'
 import CategoryNav from '@/components/features/category-nav/CategoryNav'
 
 const ProjectPage = () => {
@@ -12,9 +13,14 @@ const ProjectPage = () => {
       </Suspense>
       <section>
         <h1 className="sr-only">프로젝트 페이지</h1>
-        <AdminGuard>
-          <Link href="/projects/write">프로젝트 추가하기</Link>
-        </AdminGuard>
+        <div className="flex gap-4">
+          <AdminGuard>
+            <Link href="/projects/write">프로젝트 추가하기</Link>
+          </AdminGuard>
+          <Suspense fallback={null}>
+            <DraftToggle />
+          </Suspense>
+        </div>
 
         <Suspense fallback={<p>불러오는 중...</p>}>
           <ListWrapper type={'projects'} />
