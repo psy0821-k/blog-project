@@ -55,6 +55,7 @@ const LabDetailPage = async ({ params }: LabDetailProps) => {
       </header>
       <ProjectSummary
         title={lab.title}
+        thumbnailUrl={lab.thumbnailUrl}
         status={lab.status}
         createdAt={lab.createdAt}
         updatedAt={lab.updatedAt}

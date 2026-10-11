@@ -1,9 +1,15 @@
 import { PostStatus } from '@/lib/post-status'
 import Image from 'next/image'
 import TypingText from '@/components/common/TypingText'
+import { isVideoUrl } from '@/lib/media-validation'
+import SummaryVideo from './SummaryVideo'
+
+const COVER_CLASS =
+  'w-full h-auto aspect-video rounded-2xl object-cover min-[1440px]:flex-1 min-[1440px]:min-w-0'
 
 interface SummaryProps {
   title: string
+  thumbnailUrl: string | null
   status: PostStatus
   createdAt: Date
   updatedAt: Date
@@ -15,6 +21,7 @@ interface SummaryProps {
 
 const ProjectSummary = ({
   title,
+  thumbnailUrl,
   status,
   createdAt,
   updatedAt,
@@ -25,14 +32,18 @@ const ProjectSummary = ({
 }: SummaryProps) => {
   return (
     <section className="relative flex flex-col gap-9 min-[1440px]:flex-row min-[1440px]:items-center">
-      <Image
-        src={'/fallback.webp'}
-        alt=""
-        width={640}
-        height={360}
-        loading="eager"
-        className="w-full h-auto aspect-video rounded-2xl object-cover min-[1440px]:flex-1 min-[1440px]:min-w-0"
-      />
+      {thumbnailUrl && isVideoUrl(thumbnailUrl) ? (
+        <SummaryVideo src={thumbnailUrl} className={COVER_CLASS} />
+      ) : (
+        <Image
+          src={thumbnailUrl || '/fallback.webp'}
+          alt=""
+          width={640}
+          height={360}
+          loading="eager"
+          className={COVER_CLASS}
+        />
+      )}
       <div className="min-[1440px]:flex-1 min-[1440px]:min-w-0">
         <header>
           <h1>

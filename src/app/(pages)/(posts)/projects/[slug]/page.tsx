@@ -54,6 +54,7 @@ const ProjectDetailPage = async ({ params }: ProjectDetailPageProps) => {
         </AdminGuard>
         <ProjectSummary
           title={project.title}
+          thumbnailUrl={project.thumbnailUrl}
           status={project.status}
           createdAt={project.createdAt}
           updatedAt={project.updatedAt}
