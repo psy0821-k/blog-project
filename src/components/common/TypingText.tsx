@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { usePrefersReducedMotion } from '@/hooks/use-prefers-reduced-motion'
 
 interface TypingTextProps {
   text: string
@@ -10,7 +11,10 @@ interface TypingTextProps {
 
 const TypingText = ({ text, speed = 80 }: TypingTextProps) => {
   const [count, setCount] = useState(0)
-  const isTyping = count < text.length
+  // 움직임 줄이기 설정에서는 타이핑 없이 전체 텍스트를 바로 보여준다.
+  const isReducedMotion = usePrefersReducedMotion()
+  const visibleCount = isReducedMotion ? text.length : count
+  const isTyping = visibleCount < text.length
 
   useEffect(() => {
     if (!isTyping) return
@@ -25,7 +29,7 @@ const TypingText = ({ text, speed = 80 }: TypingTextProps) => {
         {text}
       </span>
       <span aria-hidden="true" className="absolute inset-0">
-        {text.slice(0, count)}
+        {text.slice(0, visibleCount)}
         {isTyping && '|'}
       </span>
     </span>
