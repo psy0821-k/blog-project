@@ -12,7 +12,7 @@ test.describe('Header', () => {
     await expect(nav.getByRole('link', { name: '프로젝트', exact: true })).toBeVisible()
     await expect(nav.getByRole('link', { name: '실험실', exact: true })).toBeVisible()
     await expect(nav.getByRole('link', { name: '개발로그', exact: true })).toBeVisible()
-    await expect(nav.getByRole('link', { name: '소개', exact: true })).toBeVisible()
+    await expect(nav.getByRole('link', { name: '소개', exact: true })).toHaveCount(0)
     await expect(page.getByRole('button', { name: '메뉴 열기' })).toBeHidden()
   })
 
@@ -31,7 +31,7 @@ test.describe('Header', () => {
 
     const nav = page.locator('header nav')
     await expect(nav).toBeInViewport()
-    await expect(nav.getByRole('link', { name: '소개', exact: true })).toBeVisible()
+    await expect(nav.getByRole('link', { name: '소개', exact: true })).toHaveCount(0)
     await expect(nav.getByRole('link', { name: '프로젝트', exact: true })).toBeVisible()
     await expect(nav.getByRole('link', { name: '실험실', exact: true })).toBeVisible()
     await expect(nav.getByRole('link', { name: '개발로그', exact: true })).toBeVisible()
