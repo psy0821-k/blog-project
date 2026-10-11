@@ -24,16 +24,16 @@ const ProjectSummary = ({
   description,
 }: SummaryProps) => {
   return (
-    <section className="relative flex flex-col sm:flex-row gap-9 sm:items-center">
+    <section className="relative flex flex-col gap-9 min-[1440px]:flex-row min-[1440px]:items-center">
       <Image
         src={'/fallback.webp'}
         alt=""
         width={640}
         height={360}
         loading="eager"
-        className="w-auto h-auto aspect-video rounded-2xl"
+        className="w-full h-auto aspect-video rounded-2xl object-cover min-[1440px]:flex-1 min-[1440px]:min-w-0"
       />
-      <div>
+      <div className="min-[1440px]:flex-1 min-[1440px]:min-w-0">
         <header>
           <h1>
             <TypingText text={title} />
