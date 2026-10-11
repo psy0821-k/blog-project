@@ -7,6 +7,7 @@ interface PaginationProps {
   totalPages: number
   // 서브메뉴 선택 상태. 페이지를 넘겨도 유지되도록 링크에 함께 싣는다.
   category?: string
+  draft?: boolean
 }
 
 interface PageRange {
@@ -21,12 +22,13 @@ export const getPageRange = (page: number, totalPages: number): PageRange => {
   return { start, end: Math.min(totalPages, start + PAGES_PER_GROUP - 1) }
 }
 
-export const Pagination = ({ page, totalPages, category }: PaginationProps) => {
+export const Pagination = ({ page, totalPages, category, draft }: PaginationProps) => {
   if (totalPages <= 1) return null
 
   const getPageHref = (pageNumber: number) => {
     const searchParams = new URLSearchParams({ page: String(pageNumber) })
     if (category) searchParams.set('category', category)
+    if (draft) searchParams.set('draft', 'true')
 
     return `?${searchParams.toString()}`
   }
