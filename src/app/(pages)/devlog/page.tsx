@@ -3,6 +3,7 @@ import DevlogListWrapper from '@/components/pages/devlogListPage/DevlogListWrapp
 import Link from 'next/link'
 import AdminGuard from '@/components/common/AdminGuard'
 import DraftToggle from '@/components/pages/cardListPage/DraftToggle'
+import SearchForm from '@/components/pages/cardListPage/SearchForm'
 
 const DevLogPage = () => {
   return (
@@ -16,6 +17,9 @@ const DevLogPage = () => {
         </AdminGuard>
         <Suspense fallback={null}>
           <DraftToggle />
+        </Suspense>
+        <Suspense fallback={null}>
+          <SearchForm />
         </Suspense>
       </div>
 

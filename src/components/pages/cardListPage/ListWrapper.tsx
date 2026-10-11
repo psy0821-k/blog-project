@@ -16,11 +16,13 @@ export const ListWrapper = ({ type }: ListWrapperProps) => {
   const searchParams = useSearchParams()
   const page = Math.max(1, Number(searchParams.get('page')) || 1)
   const category = searchParams.get('category') ?? undefined
+  const q = searchParams.get('q')?.trim() || undefined
   const isDraft = useIsAdmin() && searchParams.get('draft') === 'true'
   const { data, isLoading, isError, isPlaceholderData } = usePostList(type, {
     page,
     category,
     draft: isDraft,
+    q,
   })
 
   if (data && !isPlaceholderData && page > Math.max(1, data.meta.totalPages)) {
@@ -54,7 +56,7 @@ export const ListWrapper = ({ type }: ListWrapperProps) => {
         </ul>
       ) : (
         // 로딩/에러 중에는 보이지 않고, 글이 하나도 없을 때만 보인다.
-        data?.meta.totalCount === 0 && <NoResult />
+        data?.meta.totalCount === 0 && <NoResult keyword={q} />
       )}
 
       {data && (
@@ -63,6 +65,7 @@ export const ListWrapper = ({ type }: ListWrapperProps) => {
           totalPages={data.meta.totalPages}
           category={category}
           draft={isDraft}
+          q={q}
         />
       )}
     </section>

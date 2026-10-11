@@ -20,10 +20,12 @@ const HIDE_ON_MOBILE_CLASS = 'hidden sm:table-cell'
 export const DevlogListWrapper = () => {
   const searchParams = useSearchParams()
   const page = Math.max(1, Number(searchParams.get('page')) || 1)
+  const q = searchParams.get('q')?.trim() || undefined
   const isDraft = useIsAdmin() && searchParams.get('draft') === 'true'
   const { data, isLoading, isError, isPlaceholderData } = usePostList('devlog', {
     page,
     draft: isDraft,
+    q,
   })
 
   if (data && !isPlaceholderData && page > Math.max(1, data.meta.totalPages)) {
@@ -92,10 +94,10 @@ export const DevlogListWrapper = () => {
           </tbody>
         </table>
       ) : (
-        data?.meta.totalCount === 0 && <NoResult />
+        data?.meta.totalCount === 0 && <NoResult keyword={q} />
       )}
 
-      {data && <Pagination page={page} totalPages={data.meta.totalPages} draft={isDraft} />}
+      {data && <Pagination page={page} totalPages={data.meta.totalPages} draft={isDraft} q={q} />}
     </section>
   )
 }
