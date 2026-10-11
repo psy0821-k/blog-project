@@ -6,6 +6,7 @@ import { Prisma, PostType } from '@/generated/prisma/client'
  * 발행된(published) 게시글을 타입별로 페이지네이션 조회한다.
  * select는 타입별로 노출 필드가 다를 수 있어(예: DEV_LOG는 thumbnailUrl 미사용) 호출부에서 주입받는다.
  * `?category=<slug>`가 있으면 해당 서브메뉴의 글만 조회한다. 존재하지 않는 slug는 빈 목록이 된다.
+ * `?q=<검색어>`가 있으면 제목에 검색어가 포함된 글만 조회한다(대소문자 구분 없음).
  * `published`를 false로 넘기면 임시저장 글만 조회한다. 호출부에서 관리자 확인을 마친 뒤에만 사용한다.
  */
 export async function getPublishedPostList<T extends Prisma.PostSelect>(
@@ -17,11 +18,13 @@ export async function getPublishedPostList<T extends Prisma.PostSelect>(
   const pagination = parsePaginationParams(searchParams)
 
   const categorySlug = searchParams.get('category')
+  const keyword = searchParams.get('q')?.trim()
 
   const where: Prisma.PostWhereInput = {
     type,
     published,
     ...(categorySlug && { category: { type, slug: categorySlug } }),
+    ...(keyword && { title: { contains: keyword, mode: 'insensitive' } }),
   }
 
   const [posts, totalCount] = await Promise.all([

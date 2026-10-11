@@ -3,6 +3,7 @@ import ListWrapper from '@/components/pages/cardListPage/ListWrapper'
 import Link from 'next/link'
 import AdminGuard from '@/components/common/AdminGuard'
 import DraftToggle from '@/components/pages/cardListPage/DraftToggle'
+import SearchForm from '@/components/pages/cardListPage/SearchForm'
 import CategoryNav from '@/components/features/category-nav/CategoryNav'
 
 const LapPage = () => {
@@ -19,6 +20,9 @@ const LapPage = () => {
           </AdminGuard>
           <Suspense fallback={null}>
             <DraftToggle />
+          </Suspense>
+          <Suspense fallback={null}>
+            <SearchForm />
           </Suspense>
         </div>
 

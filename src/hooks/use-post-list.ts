@@ -26,6 +26,8 @@ interface UsePostListParams {
   // 서브메뉴(카테고리) slug. 없으면 전체 조회
   category?: string
   draft?: boolean
+  // 제목 검색어. 없으면 전체 조회
+  q?: string
 }
 
 async function fetchPostList(
@@ -37,6 +39,7 @@ async function fetchPostList(
   if (params.pageSize) searchParams.set('pageSize', String(params.pageSize))
   if (params.category) searchParams.set('category', params.category)
   if (params.draft) searchParams.set('draft', 'true')
+  if (params.q) searchParams.set('q', params.q)
 
   const res = await fetch(`/api/${type}?${searchParams.toString()}`)
   if (!res.ok) {
@@ -47,11 +50,11 @@ async function fetchPostList(
 }
 
 export function usePostList(type: PostListType, params: UsePostListParams = {}) {
-  const { page = 1, pageSize, category, draft = false } = params
+  const { page = 1, pageSize, category, draft = false, q } = params
 
   return useQuery({
-    queryKey: ['posts', type, page, pageSize, category, draft],
-    queryFn: () => fetchPostList(type, { page, pageSize, category, draft }),
+    queryKey: ['posts', type, page, pageSize, category, draft, q],
+    queryFn: () => fetchPostList(type, { page, pageSize, category, draft, q }),
     // 페이지 전환 중에도 이전 페이지 목록을 유지해 깜빡임을 막는다.
     placeholderData: keepPreviousData,
   })
