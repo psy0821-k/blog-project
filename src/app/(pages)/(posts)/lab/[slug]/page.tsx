@@ -7,6 +7,7 @@ import { getPublishedPostBySlug, incrementPostViewCount } from '@/lib/post-detai
 import { sanitizePostHtml } from '@/lib/sanitize-post-html'
 import { decodeSlugParam } from '@/lib/slug'
 import { Metadata } from 'next'
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import React, { cache } from 'react'
 
@@ -53,6 +54,7 @@ const LabDetailPage = async ({ params }: LabDetailProps) => {
         <PostStatusBadge status={lab.status} />
         <TagList tags={lab.postTags.map(({ tag }) => tag.name)} />
         <AdminGuard>
+          <Link href={`/lab/${encodeURIComponent(lab.slug)}/edit`}>수정</Link>
           <DeletePostButton type="lab" slug={lab.slug} />
         </AdminGuard>
         <p className="mt-2 text-sm text-gray-500">
