@@ -1,5 +1,6 @@
 'use client'
 import { notFound, useSearchParams } from 'next/navigation'
+import { useIsAdmin } from '@/hooks/use-admin-session'
 import { usePostList } from '@/hooks/use-post-list'
 import CardComponent from './CardComponent'
 import NoResult from '@/components/common/NoResult'
@@ -15,7 +16,12 @@ export const ListWrapper = ({ type }: ListWrapperProps) => {
   const searchParams = useSearchParams()
   const page = Math.max(1, Number(searchParams.get('page')) || 1)
   const category = searchParams.get('category') ?? undefined
-  const { data, isLoading, isError, isPlaceholderData } = usePostList(type, { page, category })
+  const isDraft = useIsAdmin() && searchParams.get('draft') === 'true'
+  const { data, isLoading, isError, isPlaceholderData } = usePostList(type, {
+    page,
+    category,
+    draft: isDraft,
+  })
 
   if (data && !isPlaceholderData && page > Math.max(1, data.meta.totalPages)) {
     notFound()
@@ -37,7 +43,11 @@ export const ListWrapper = ({ type }: ListWrapperProps) => {
                 title={post.title}
                 thumbnailUrl={post.thumbnailUrl ?? null}
                 status={post.status}
-                href={`/${type}/${post.slug}`}
+                href={
+                  isDraft
+                    ? `/${type}/${encodeURIComponent(post.slug)}/edit`
+                    : `/${type}/${post.slug}`
+                }
               />
             </li>
           ))}
@@ -47,7 +57,14 @@ export const ListWrapper = ({ type }: ListWrapperProps) => {
         data?.meta.totalCount === 0 && <NoResult />
       )}
 
-      {data && <Pagination page={page} totalPages={data.meta.totalPages} category={category} />}
+      {data && (
+        <Pagination
+          page={page}
+          totalPages={data.meta.totalPages}
+          category={category}
+          draft={isDraft}
+        />
+      )}
     </section>
   )
 }

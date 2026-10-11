@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getPublishedPostList } from '@/lib/post-list'
+import { createPostListResponse } from '@/lib/post-list-response'
 import type { Prisma } from '@/generated/prisma/client'
 import { requireAdmin } from '@/lib/api-auth'
 import { conflictResponse, forbiddenResponse, invalidJsonResponse, validationErrorResponse } from '@/lib/api-response'
@@ -22,8 +22,7 @@ const LAB_LIST_SELECT = {
 } satisfies Prisma.PostSelect
 
 export async function GET(request: NextRequest) {
-  const result = await getPublishedPostList('LAB', request.nextUrl.searchParams, LAB_LIST_SELECT)
-  return NextResponse.json(result)
+  return createPostListResponse(request, 'LAB', LAB_LIST_SELECT)
 }
 
 export async function POST(request: NextRequest) {

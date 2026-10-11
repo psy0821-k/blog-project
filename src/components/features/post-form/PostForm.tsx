@@ -90,7 +90,15 @@ const PostForm = ({ type, heading, post }: PostFormProps) => {
           metaTitle: metaTitle.trim() || null,
           metaDescription: metaDescription.trim() || null,
         },
-        { onSuccess: () => router.push(`/${type}/${encodeURIComponent(post.slug)}`) },
+        {
+          // 임시저장 상태로 저장했다면 발행 글만 보이는 상세 페이지 대신 임시저장 목록으로 돌아간다.
+          onSuccess: () =>
+            router.push(
+              published
+                ? `/${type}/${encodeURIComponent(post.slug)}`
+                : `/${type}?draft=true`,
+            ),
+        },
       )
       return
     }

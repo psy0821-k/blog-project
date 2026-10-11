@@ -8,7 +8,7 @@ import {
 } from '@/lib/api-response'
 import { validateCategoryForType } from '@/lib/category'
 import { inferMediaType } from '@/lib/media'
-import { getPublishedPostList } from '@/lib/post-list'
+import { createPostListResponse } from '@/lib/post-list-response'
 import { createPostSchema } from '@/lib/post-schema'
 import { isUniqueConstraintError, prisma } from '@/lib/prisma'
 import { generateSlug } from '@/lib/slug'
@@ -27,8 +27,7 @@ const PROJECT_LIST_SELECT = {
 } satisfies Prisma.PostSelect
 
 export async function GET(request: NextRequest) {
-  const result = await getPublishedPostList('PROJECT', request.nextUrl.searchParams, PROJECT_LIST_SELECT)
-  return NextResponse.json(result)
+  return createPostListResponse(request, 'PROJECT', PROJECT_LIST_SELECT)
 }
 
 export async function POST(request: NextRequest) {

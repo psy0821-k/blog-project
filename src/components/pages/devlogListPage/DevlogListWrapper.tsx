@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { notFound, useSearchParams } from 'next/navigation'
 import NoResult from '@/components/common/NoResult'
 import Pagination from '@/components/pages/cardListPage/Pagination'
+import { useIsAdmin } from '@/hooks/use-admin-session'
 import { usePostList } from '@/hooks/use-post-list'
 
 const formatDate = (isoDate: string) => {
@@ -19,7 +20,11 @@ const HIDE_ON_MOBILE_CLASS = 'hidden sm:table-cell'
 export const DevlogListWrapper = () => {
   const searchParams = useSearchParams()
   const page = Math.max(1, Number(searchParams.get('page')) || 1)
-  const { data, isLoading, isError, isPlaceholderData } = usePostList('devlog', { page })
+  const isDraft = useIsAdmin() && searchParams.get('draft') === 'true'
+  const { data, isLoading, isError, isPlaceholderData } = usePostList('devlog', {
+    page,
+    draft: isDraft,
+  })
 
   if (data && !isPlaceholderData && page > Math.max(1, data.meta.totalPages)) {
     notFound()
@@ -62,7 +67,14 @@ export const DevlogListWrapper = () => {
                     {postNumber}
                   </td>
                   <td className="w-full max-w-0">
-                    <Link href={`/devlog/${post.slug}`} className={`block truncate ${CELL_CLASS}`}>
+                    <Link
+                      href={
+                        isDraft
+                          ? `/devlog/${encodeURIComponent(post.slug)}/edit`
+                          : `/devlog/${post.slug}`
+                      }
+                      className={`block truncate ${CELL_CLASS}`}
+                    >
                       {post.title}
                     </Link>
                   </td>
@@ -83,7 +95,7 @@ export const DevlogListWrapper = () => {
         data?.meta.totalCount === 0 && <NoResult />
       )}
 
-      {data && <Pagination page={page} totalPages={data.meta.totalPages} />}
+      {data && <Pagination page={page} totalPages={data.meta.totalPages} draft={isDraft} />}
     </section>
   )
 }
