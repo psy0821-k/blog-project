@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+# 같은 브랜치에 새 커밋이 오면 진행 중이던 이전 실행은 취소한다.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    # 빌드는 DB에 접속하지 않지만 환경변수 존재 여부는 확인하므로 가짜 값을 둔다. 실제 비밀 값은 쓰지 않는다.
+    env:
+      DATABASE_URL: postgresql://ci:ci@localhost:5432/ci
+      AUTH_SECRET: ci-dummy-secret
+      AUTH_GOOGLE_ID: ci
+      AUTH_GOOGLE_SECRET: ci
+      ADMIN_EMAIL: ci@example.com
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          # package.json의 packageManager와 같은 버전을 쓴다.
+          bun-version: 1.4.2
+
+      # postinstall에서 prisma generate가 실행된다.
+      - run: bun install --frozen-lockfile
+
+      - run: bun run lint
+
+      - run: bunx tsc --noEmit
+
+      - run: bun run test
+
+      - run: bun run build
