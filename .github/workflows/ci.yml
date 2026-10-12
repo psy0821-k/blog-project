@@ -20,6 +20,7 @@ jobs:
       AUTH_GOOGLE_ID: ci
       AUTH_GOOGLE_SECRET: ci
       ADMIN_EMAIL: ci@example.com
+      IMAGEKIT_ID: ci
 
     steps:
       - uses: actions/checkout@v4
