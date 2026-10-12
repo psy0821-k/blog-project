@@ -3,6 +3,7 @@
 import { useState, type SubmitEvent } from 'react'
 import { useRouter } from 'next/navigation'
 
+import ProjectSelectField from '@/components/features/post-form/ProjectSelectField'
 import TagInputField from '@/components/features/post-form/TagInputField'
 import ThumbnailField, { type ThumbnailValue } from '@/components/features/post-form/ThumbnailField'
 import RichTextEditor from '@/components/features/rich-text-editor/RichTextEditor'
@@ -22,6 +23,8 @@ export interface EditablePost {
   metaTitle: string | null
   metaDescription: string | null
   published: boolean
+  // devlog에서만 쓴다.
+  projectId?: string | null
   // 아래 필드는 devlog에서 쓰지 않으므로 생략할 수 있다.
   thumbnailUrl?: string | null
   status?: PostStatus
@@ -47,6 +50,7 @@ const PostForm = ({ type, heading, post }: PostFormProps) => {
     post?.thumbnailUrl ? { url: post.thumbnailUrl } : null,
   )
   const [categoryId, setCategoryId] = useState(post?.categoryId ?? '')
+  const [projectId, setProjectId] = useState(post?.projectId ?? '')
   const [content, setContent] = useState(post?.content ?? '')
   const [metaTitle, setMetaTitle] = useState(post?.metaTitle ?? '')
   const [metaDescription, setMetaDescription] = useState(post?.metaDescription ?? '')
@@ -86,7 +90,9 @@ const PostForm = ({ type, heading, post }: PostFormProps) => {
           content,
           published,
           categoryId: categoryId || null,
-          ...(!isDevlog && { status, tags, thumbnailUrl: thumbnail?.url ?? null }),
+          ...(isDevlog
+            ? { projectId: projectId || null }
+            : { status, tags, thumbnailUrl: thumbnail?.url ?? null }),
           metaTitle: metaTitle.trim() || null,
           metaDescription: metaDescription.trim() || null,
         },
@@ -108,7 +114,9 @@ const PostForm = ({ type, heading, post }: PostFormProps) => {
         published,
         slug: slug.trim() || undefined,
         categoryId: categoryId || undefined,
-        ...(!isDevlog && { status, tags, thumbnailUrl: thumbnail?.url }),
+        ...(isDevlog
+          ? { projectId: projectId || undefined }
+          : { status, tags, thumbnailUrl: thumbnail?.url }),
         metaTitle: metaTitle.trim() || undefined,
         metaDescription: metaDescription.trim() || undefined,
       },
@@ -167,6 +175,8 @@ const PostForm = ({ type, heading, post }: PostFormProps) => {
       </div>
 
       {!isDevlog && <ThumbnailField value={thumbnail} onChange={setThumbnail} />}
+
+      {isDevlog && <ProjectSelectField value={projectId} onChange={setProjectId} />}
 
       {!isDevlog && (
         <>

@@ -1,7 +1,10 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 import type { ApiErrorBody, CreatePostType } from '@/hooks/use-create-post'
-import type { UpdatePostInput } from '@/lib/post-schema'
+import type { UpdateDevLogInput, UpdatePostInput } from '@/lib/post-schema'
+
+// 개발일지는 속한 프로젝트(projectId)를 함께 보낼 수 있다. null은 연결 해제다.
+type UpdatePostPayload = UpdatePostInput & Pick<UpdateDevLogInput, 'projectId'>
 
 export interface UpdatedPost {
   id: string
@@ -12,7 +15,7 @@ export interface UpdatedPost {
 export async function updatePost(
   type: CreatePostType,
   slug: string,
-  input: UpdatePostInput,
+  input: UpdatePostPayload,
 ): Promise<UpdatedPost> {
   const res = await fetch(`/api/${type}/${encodeURIComponent(slug)}`, {
     method: 'PATCH',
@@ -32,7 +35,7 @@ export function useUpdatePost(type: CreatePostType, slug: string) {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (input: UpdatePostInput) => updatePost(type, slug, input),
+    mutationFn: (input: UpdatePostPayload) => updatePost(type, slug, input),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['posts', type] }),
   })
 }
