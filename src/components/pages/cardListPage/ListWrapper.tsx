@@ -45,6 +45,8 @@ export const ListWrapper = ({ type }: ListWrapperProps) => {
                 title={post.title}
                 thumbnailUrl={post.thumbnailUrl ?? null}
                 status={post.status}
+                createdAt={post.createdAt}
+                viewCount={post.viewCount}
                 href={
                   isDraft
                     ? `/${type}/${encodeURIComponent(post.slug)}/edit`
@@ -55,7 +57,6 @@ export const ListWrapper = ({ type }: ListWrapperProps) => {
           ))}
         </ul>
       ) : (
-        // 로딩/에러 중에는 보이지 않고, 글이 하나도 없을 때만 보인다.
         data?.meta.totalCount === 0 && <NoResult keyword={q} />
       )}
 

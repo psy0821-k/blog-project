@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
+import { formatKoreanDate } from '@/lib/format-date'
 import { isVideoUrl } from '@/lib/media-validation'
-import PostStatusBadge from '@/components/common/PostStatusBadge'
 import type { PostStatus } from '@/lib/post-status'
 import CardVideo from './CardVideo'
 
@@ -10,9 +10,18 @@ interface CardProps {
   title: string
   href: string
   status: PostStatus
+  createdAt: string
+  viewCount: number
 }
 
-export const CardComponent = ({ thumbnailUrl, title, href, status }: CardProps) => {
+export const CardComponent = ({
+  thumbnailUrl,
+  title,
+  href,
+  status,
+  createdAt,
+  viewCount,
+}: CardProps) => {
   return (
     <article>
       <Link href={href}>
@@ -30,9 +39,11 @@ export const CardComponent = ({ thumbnailUrl, title, href, status }: CardProps) 
             ></Image>
           )}
         </div>
-        <h3 className="text-[18px] font-medium">
-          {title} <PostStatusBadge status={status} />
-        </h3>
+        <h3 className="text-[24px] font-medium my-2">{title}</h3>
+        <p>{status}</p>
+        <p className="text-gray-500 text-[12px]">
+          {formatKoreanDate(new Date(createdAt))} | view {viewCount}
+        </p>
       </Link>
     </article>
   )
