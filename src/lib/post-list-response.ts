@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireAdmin } from '@/lib/api-auth'
 import { forbiddenResponse } from '@/lib/api-response'
-import { getPublishedPostList } from '@/lib/post-list'
+import { getPostList } from '@/lib/post-list'
 import type { Prisma, PostType } from '@/generated/prisma/client'
 
 /**
@@ -21,6 +21,6 @@ export async function createPostListResponse<T extends Prisma.PostSelect>(
     return forbiddenResponse()
   }
 
-  const result = await getPublishedPostList(type, searchParams, select, !isDraft, orderBy)
+  const result = await getPostList(type, searchParams, select, !isDraft, orderBy)
   return NextResponse.json(result)
 }
