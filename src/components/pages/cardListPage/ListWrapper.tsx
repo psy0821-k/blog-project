@@ -38,9 +38,9 @@ export const ListWrapper = ({ type }: ListWrapperProps) => {
       )}
 
       {data?.data.length ? (
-        <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3 p-4">
+        <ul className="grid grid-cols-2 gap-4 px-4 py-4 sm:grid-cols-3 md:px-0">
           {data.data.map((post) => (
-            <li key={post.id}>
+            <li key={post.id} className="min-w-0">
               <CardComponent
                 title={post.title}
                 thumbnailUrl={post.thumbnailUrl ?? null}
