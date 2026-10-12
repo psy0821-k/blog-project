@@ -8,12 +8,16 @@ import { Prisma, PostType } from '@/generated/prisma/client'
  * `?category=<slug>`가 있으면 해당 서브메뉴의 글만 조회한다. 존재하지 않는 slug는 빈 목록이 된다.
  * `?q=<검색어>`가 있으면 제목에 검색어가 포함된 글만 조회한다(대소문자 구분 없음).
  * `published`를 false로 넘기면 임시저장 글만 조회한다. 호출부에서 관리자 확인을 마친 뒤에만 사용한다.
+ * `orderBy`는 타입별로 정렬 기준이 다를 수 있어 호출부에서 주입받고, 생략하면 최신 작성순이다.
  */
 export async function getPublishedPostList<T extends Prisma.PostSelect>(
   type: PostType,
   searchParams: URLSearchParams,
   select: T,
   published = true,
+  orderBy: Prisma.PostOrderByWithRelationInput | Prisma.PostOrderByWithRelationInput[] = {
+    createdAt: 'desc',
+  },
 ) {
   const pagination = parsePaginationParams(searchParams)
 
@@ -31,7 +35,7 @@ export async function getPublishedPostList<T extends Prisma.PostSelect>(
     prisma.post.findMany({
       where,
       select,
-      orderBy: { createdAt: 'desc' },
+      orderBy,
       skip: pagination.skip,
       take: pagination.take,
     }),

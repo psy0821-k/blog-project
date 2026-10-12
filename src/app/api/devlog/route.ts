@@ -2,7 +2,13 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createPostListResponse } from '@/lib/post-list-response'
 import type { Prisma } from '@/generated/prisma/client'
 import { requireAdmin } from '@/lib/api-auth'
-import { conflictResponse, forbiddenResponse, invalidJsonResponse, validationErrorResponse } from '@/lib/api-response'
+import {
+  conflictResponse,
+  forbiddenResponse,
+  invalidJsonResponse,
+  validationErrorResponse,
+} from '@/lib/api-response'
+import { getNextDevLogNumber } from '@/lib/post-number'
 import { createDevLogSchema } from '@/lib/post-schema'
 import { isUniqueConstraintError, prisma } from '@/lib/prisma'
 import { generateSlug } from '@/lib/slug'
@@ -10,6 +16,7 @@ import { inferMediaType } from '@/lib/media'
 
 const DEVLOG_LIST_SELECT = {
   id: true,
+  devNumber: true,
   title: true,
   slug: true,
   viewCount: true,
@@ -17,8 +24,13 @@ const DEVLOG_LIST_SELECT = {
   updatedAt: true,
 } satisfies Prisma.PostSelect
 
+const DEVLOG_LIST_ORDER_BY = [
+  { devNumber: { sort: 'desc', nulls: 'last' } },
+  { createdAt: 'desc' },
+] satisfies Prisma.PostOrderByWithRelationInput[]
+
 export async function GET(request: NextRequest) {
-  return createPostListResponse(request, 'DEV_LOG', DEVLOG_LIST_SELECT)
+  return createPostListResponse(request, 'DEV_LOG', DEVLOG_LIST_SELECT, DEVLOG_LIST_ORDER_BY)
 }
 
 export async function POST(request: NextRequest) {
@@ -57,6 +69,7 @@ export async function POST(request: NextRequest) {
           metaTitle,
           metaDescription,
           published,
+          devNumber: published ? await getNextDevLogNumber(tx) : undefined,
         },
       })
 

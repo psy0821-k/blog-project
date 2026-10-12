@@ -57,16 +57,13 @@ export const DevlogListWrapper = () => {
             </tr>
           </thead>
           <tbody>
-            {data.data.map((post, index) => {
-              // 최신 글이 가장 큰 번호가 되도록 전체 글 수를 기준으로 계산한다.(api로 번호 지정해줄 예정 삭제)
-              const postNumber = data.meta.totalCount - (page - 1) * data.meta.pageSize - index
-
+            {data.data.map((post) => {
               return (
                 <tr key={post.id} className="border-b">
                   <td
                     className={`${CELL_CLASS} ${HIDE_ON_MOBILE_CLASS} text-center text-sm text-gray-500`}
                   >
-                    {postNumber}
+                    {post.devNumber ?? '-'}
                   </td>
                   <td className="w-full max-w-0">
                     <Link

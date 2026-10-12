@@ -6,6 +6,8 @@ export type PostListType = 'projects' | 'lab' | 'devlog'
 
 export interface PostListItem {
   id: string
+  // DEV_LOG의 발행 번호. 임시저장 글은 null이고, 다른 종류는 응답에 없다.
+  devNumber?: number | null
   title: string
   slug: string
   thumbnailUrl?: string | null
@@ -26,7 +28,6 @@ interface UsePostListParams {
   // 서브메뉴(카테고리) slug. 없으면 전체 조회
   category?: string
   draft?: boolean
-  // 제목 검색어. 없으면 전체 조회
   q?: string
 }
 

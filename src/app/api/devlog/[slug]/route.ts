@@ -1,9 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireAdmin } from '@/lib/api-auth'
-import { forbiddenResponse, invalidJsonResponse, notFoundResponse, validationErrorResponse } from '@/lib/api-response'
+import {
+  forbiddenResponse,
+  invalidJsonResponse,
+  notFoundResponse,
+  validationErrorResponse,
+} from '@/lib/api-response'
 import { validateCategoryForType } from '@/lib/category'
 import { inferMediaType } from '@/lib/media'
 import { getPublishedPostBySlug, incrementPostViewCount } from '@/lib/post-detail'
+import { getNextDevLogNumber } from '@/lib/post-number'
 import { updateDevLogSchema } from '@/lib/post-schema'
 import { isRecordNotFoundError, prisma } from '@/lib/prisma'
 
@@ -63,9 +69,11 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
 
   try {
     const devLog = await prisma.$transaction(async (tx) => {
+      const needsNumber = postData.published === true && existing.devNumber === null
+
       const updated = await tx.post.update({
         where: { id: existing.id },
-        data: postData,
+        data: needsNumber ? { ...postData, devNumber: await getNextDevLogNumber(tx) } : postData,
       })
 
       if (mediaUrls !== undefined) {
@@ -87,7 +95,6 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
 
     return NextResponse.json(devLog)
   } catch (error) {
-    // findUnique 이후 update 사이에 다른 요청이 먼저 삭제했을 경우(레이스 컨디션) 404로 변환한다.
     if (isRecordNotFoundError(error)) {
       return notFoundResponse()
     }
@@ -114,7 +121,6 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
   try {
     await prisma.post.delete({ where: { id: existing.id } })
   } catch (error) {
-    // findUnique 이후 delete 사이에 다른 요청이 먼저 삭제했을 경우(레이스 컨디션) 404로 변환한다.
     if (isRecordNotFoundError(error)) {
       return notFoundResponse()
     }
