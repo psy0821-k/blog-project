@@ -8,7 +8,6 @@ export const DraftToggle = () => {
   const searchParams = useSearchParams()
   const isDraft = searchParams.get('draft') === 'true'
 
-  // 서브메뉴 선택은 유지하고, 목록이 바뀌므로 페이지 번호는 초기화한다.
   const nextParams = new URLSearchParams(searchParams)
   nextParams.delete('page')
   if (isDraft) nextParams.delete('draft')
@@ -18,8 +17,11 @@ export const DraftToggle = () => {
 
   return (
     <AdminGuard>
-      <Link href={query ? `${pathname}?${query}` : pathname}>
-        {isDraft ? '발행된 글 보기' : '임시저장 목록'}
+      <Link
+        href={query ? `${pathname}?${query}` : pathname}
+        className="inline-flex min-h-11 items-center whitespace-nowrap"
+      >
+        {isDraft ? '발행된 글' : '임시저장 목록'}
       </Link>
     </AdminGuard>
   )

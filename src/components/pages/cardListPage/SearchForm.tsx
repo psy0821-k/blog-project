@@ -24,7 +24,7 @@ export const SearchForm = () => {
 
   return (
     // 주소의 검색어가 바뀌면(뒤로 가기 등) 입력값도 함께 바뀌도록 key로 폼을 다시 만든다.
-    <form key={keyword} role="search" onSubmit={handleSubmit} className="flex gap-2">
+    <form key={keyword} role="search" onSubmit={handleSubmit} className="flex w-full items-center gap-2 xl:w-auto">
       <label htmlFor="post-search" className="sr-only">
         제목 검색
       </label>
@@ -34,9 +34,9 @@ export const SearchForm = () => {
         type="search"
         defaultValue={keyword}
         placeholder="제목 검색"
-        className="rounded border border-gray-300 px-3 py-1"
+        className="min-h-11 min-w-0 flex-1 rounded border border-gray-300 px-3 py-1 xl:w-56 xl:flex-none"
       />
-      <button type="submit">검색</button>
+      <button type="submit" className="min-h-11 shrink-0 px-2">검색</button>
     </form>
   )
 }

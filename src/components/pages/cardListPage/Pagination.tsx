@@ -1,6 +1,8 @@
 import Link from 'next/link'
 
 const PAGES_PER_GROUP = 5
+// 터치 영역 44px 이상을 확보하는 페이지 이동 항목 공통 클래스
+const STEP_CLASS = 'inline-flex min-h-11 min-w-11 items-center justify-center px-1'
 
 interface PaginationProps {
   page: number
@@ -50,7 +52,7 @@ export const Pagination = ({ page, totalPages, category, draft, q }: PaginationP
       key={pageNumber}
       href={getPageHref(pageNumber)}
       aria-current={pageNumber === page ? 'page' : undefined}
-      className={pageNumber === page ? 'font-bold underline' : undefined}
+      className={`${STEP_CLASS} ${pageNumber === page ? 'font-bold underline' : ''}`}
     >
       {pageNumber}
     </Link>
@@ -59,15 +61,17 @@ export const Pagination = ({ page, totalPages, category, draft, q }: PaginationP
   // 처음/마지막 페이지에서는 이동할 곳이 없으므로 링크 대신 비활성 텍스트로 보여 준다.
   const renderStep = (label: string, targetPage: number, disabled: boolean) =>
     disabled ? (
-      <span aria-disabled="true" className="opacity-40">
+      <span aria-disabled="true" className={`${STEP_CLASS} opacity-40`}>
         {label}
       </span>
     ) : (
-      <Link href={getPageHref(targetPage)}>{label}</Link>
+      <Link href={getPageHref(targetPage)} className={STEP_CLASS}>
+        {label}
+      </Link>
     )
 
   return (
-    <nav aria-label="페이지 이동" className="flex justify-center gap-2 p-4">
+    <nav aria-label="페이지 이동" className="flex flex-wrap justify-center gap-x-1 p-4">
       {renderStep('이전', page - 1, page <= 1)}
       {showFirstPage && renderLink(1)}
       {showFirstEllipsis && <span aria-hidden>…</span>}

@@ -70,6 +70,7 @@ const ProjectDetailPage = async ({ params }: ProjectDetailPageProps) => {
           description={project.metaDescription}
         />
       </header>
+      <hr className="border-t border-gray-300 my-4.5 sm:my-6 md:my-9 lg:my-12" />
 
       <div dangerouslySetInnerHTML={{ __html: contentHtml }} />
 

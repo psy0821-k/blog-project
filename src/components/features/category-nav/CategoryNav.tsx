@@ -11,12 +11,12 @@ const SEGMENT_POST_TYPE: Record<string, CategoryPostType> = {
   lab: 'LAB',
 }
 
-const BASE_ITEM_CLASS = 'rounded-lg border border-gray-300 px-4 py-2 text-sm'
+const BASE_ITEM_CLASS = 'min-h-11 rounded-lg border border-gray-300 px-4 py-2.5 text-sm'
 const ITEM_CLASS = `${BASE_ITEM_CLASS} shrink-0 min-[1440px]:w-full`
 const CATEGORY_LINK_CLASS = `${BASE_ITEM_CLASS} min-w-0 flex-1 truncate`
 const ACTIVE_ITEM_CLASS = 'border-gray-900 bg-gray-900 text-white'
 const ADMIN_BUTTON_CLASS =
-  'inline-flex h-9 w-12 shrink-0 items-center justify-center rounded text-xs text-gray-500 hover:bg-gray-100'
+  'inline-flex h-11 w-12 shrink-0 items-center justify-center rounded text-xs text-gray-500 hover:bg-gray-100'
 
 export const CategoryNav = () => {
   const pathname = usePathname()
@@ -133,7 +133,7 @@ const CategoryNavList = ({ segment, postType }: CategoryNavListProps) => {
           aria-expanded={isOpen}
           aria-controls="category-list"
           onClick={toggle}
-          className="mt-2 text-xs px-2 py-1 rounded-2xl bg-blue-600 text-white hover:bg-blue-700 min-[1440px]:hidden"
+          className="relative mt-2 text-xs px-2 py-1 rounded-2xl before:absolute before:inset-x-0 before:-inset-y-3 before:content-[''] bg-blue-600 text-white hover:bg-blue-700 min-[1440px]:hidden"
         >
           {isOpen ? '접기' : '더보기'}
         </button>
