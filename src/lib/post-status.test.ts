@@ -6,6 +6,10 @@ describe('formatStatusLines', () => {
     expect(formatStatusLines('IN_PROGRESS')).toBe('IN\nPROGRESS')
   })
 
+  it('UP_COMING도 두 줄로 나눈다', () => {
+    expect(formatStatusLines('UP_COMING')).toBe('UP\nCOMING')
+  })
+
   it('밑줄이 없는 상태는 그대로 둔다', () => {
     expect(formatStatusLines('COMPLETED')).toBe('COMPLETED')
   })
