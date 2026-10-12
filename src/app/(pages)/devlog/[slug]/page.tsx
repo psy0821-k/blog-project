@@ -57,7 +57,7 @@ const DevLogDetailPage = async ({ params }: DevLogDetailPageProps) => {
   return (
     <main className="content">
       <article className="p-4">
-        <header className="mb-8">
+        <header>
           <h1 className="text-2xl font-bold">{devLog.title}</h1>
           <AdminGuard>
             <Link href={`/devlog/${encodeURIComponent(devLog.slug)}/edit`}>수정</Link>
@@ -79,6 +79,7 @@ const DevLogDetailPage = async ({ params }: DevLogDetailPageProps) => {
             </p>
           )}
         </header>
+        <hr className="border-t border-gray-300 my-4.5 sm:my-6 md:my-9 lg:my-12" />
 
         <div dangerouslySetInnerHTML={{ __html: contentHtml }} />
       </article>
