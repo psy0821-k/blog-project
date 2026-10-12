@@ -10,6 +10,8 @@ import RichTextEditor from '@/components/features/rich-text-editor/RichTextEdito
 import { useCategories } from '@/hooks/use-categories'
 import { useCreatePost, type CreatePostType } from '@/hooks/use-create-post'
 import { useUpdatePost } from '@/hooks/use-update-post'
+import { useUploadCleanup } from '@/hooks/use-upload-cleanup'
+import { UploadTrackerProvider } from '@/hooks/use-upload-tracker'
 import { createPostSchema, slugSchema } from '@/lib/post-schema'
 import { POST_STATUS_LABEL, type PostStatus } from '@/lib/post-status'
 import { POST_TYPE_BY_ROUTE } from '@/lib/post-type'
@@ -41,8 +43,9 @@ const INPUT_CLASS = 'w-full rounded-lg border border-gray-300 px-4 py-2 text-sm'
 const LABEL_CLASS = 'text-sm font-semibold'
 const ERROR_CLASS = 'text-xs text-red-600'
 
-const PostForm = ({ type, heading, post }: PostFormProps) => {
+const PostFormContent = ({ type, heading, post }: PostFormProps) => {
   const router = useRouter()
+  const { finalizeSave } = useUploadCleanup()
   const isDevlog = type === 'devlog'
   const [title, setTitle] = useState(post?.title ?? '')
   const [slug, setSlug] = useState(post?.slug ?? '')
@@ -82,6 +85,9 @@ const PostForm = ({ type, heading, post }: PostFormProps) => {
 
     if (!isTitleValid || !isSlugValid) return
 
+    // 저장 성공 후 본문·썸네일에서 쓰지 않는 업로드 파일을 정리하는 기준이다.
+    const savedContent = { content, thumbnailUrl: thumbnail?.url ?? null }
+
     // 수정: 비운 값은 null로 보내 기존 값을 지운다. slug는 바꿀 수 없다.
     if (post) {
       update.mutate(
@@ -98,10 +104,12 @@ const PostForm = ({ type, heading, post }: PostFormProps) => {
         },
         {
           // 임시저장 상태로 저장했다면 발행 글만 보이는 상세 페이지 대신 임시저장 목록으로 돌아간다.
-          onSuccess: () =>
+          onSuccess: () => {
+            finalizeSave(savedContent)
             router.push(
               published ? `/${type}/${encodeURIComponent(post.slug)}` : `/${type}?draft=true`,
-            ),
+            )
+          },
         },
       )
       return
@@ -121,7 +129,10 @@ const PostForm = ({ type, heading, post }: PostFormProps) => {
         metaDescription: metaDescription.trim() || undefined,
       },
       {
-        onSuccess: () => router.push(published ? `/${type}` : `/${type}?draft=true`),
+        onSuccess: () => {
+          finalizeSave(savedContent)
+          router.push(published ? `/${type}` : `/${type}?draft=true`)
+        },
       },
     )
   }
@@ -284,5 +295,12 @@ const PostForm = ({ type, heading, post }: PostFormProps) => {
     </form>
   )
 }
+
+// 업로드한 파일을 폼 단위로 추적하는 범위로 감싼다.
+const PostForm = (props: PostFormProps) => (
+  <UploadTrackerProvider>
+    <PostFormContent {...props} />
+  </UploadTrackerProvider>
+)
 
 export default PostForm

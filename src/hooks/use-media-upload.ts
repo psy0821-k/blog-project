@@ -1,5 +1,6 @@
 import { upload } from '@imagekit/next'
 import { useCallback, useState } from 'react'
+import { useOptionalUploadTracker } from '@/hooks/use-upload-tracker'
 import { validateMediaFile, type MediaPurpose } from '@/lib/media-validation'
 
 const UPLOAD_AUTH_URL = '/api/media/upload-auth'
@@ -43,6 +44,8 @@ async function fetchUploadAuth(): Promise<UploadAuthResponse> {
 export function useMediaUpload(): UseMediaUploadResult {
   const [isUploading, setIsUploading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  // 폼 안에서 쓰면 업로드한 파일을 기록해 두었다가, 저장하지 않고 벗어날 때 정리한다.
+  const tracker = useOptionalUploadTracker()
 
   const uploadFile = useCallback(async (file: File, purpose?: MediaPurpose): Promise<UploadedMedia> => {
     setError(null)
@@ -74,7 +77,10 @@ export function useMediaUpload(): UseMediaUploadResult {
         throw new Error('업로드 결과에 URL 또는 fileId가 없습니다.')
       }
 
-      return { url: result.url, fileId: result.fileId }
+      const uploaded = { url: result.url, fileId: result.fileId }
+      tracker?.track(uploaded)
+
+      return uploaded
     } catch (err) {
       const message = err instanceof Error ? err.message : '파일 업로드에 실패했습니다.'
       setError(message)
@@ -82,7 +88,7 @@ export function useMediaUpload(): UseMediaUploadResult {
     } finally {
       setIsUploading(false)
     }
-  }, [])
+  }, [tracker])
 
   /** 업로드한 파일을 ImageKit에서 삭제한다(업로드 취소용). */
   const deleteFile = useCallback(async (fileId: string): Promise<void> => {
@@ -95,7 +101,9 @@ export function useMediaUpload(): UseMediaUploadResult {
       setError(message)
       throw new Error(message)
     }
-  }, [])
+
+    tracker?.untrack(fileId)
+  }, [tracker])
 
   return { uploadFile, deleteFile, isUploading, error }
 }

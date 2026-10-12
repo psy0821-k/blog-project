@@ -9,6 +9,7 @@ import {
 import { validateCategoryForType } from '@/lib/category'
 import { inferMediaType } from '@/lib/media'
 import { getPublishedPostBySlug, incrementPostViewCount } from '@/lib/post-detail'
+import { collectPostMediaUrls, deleteUnreferencedMediaFiles } from '@/lib/post-media-cleanup'
 import { getNextDevLogNumber } from '@/lib/post-number'
 import { updateDevLogSchema } from '@/lib/post-schema'
 import { validateProjectForDevLog } from '@/lib/project-relation'
@@ -125,6 +126,8 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     return notFoundResponse()
   }
 
+  const mediaUrls = await collectPostMediaUrls(existing)
+
   try {
     await prisma.post.delete({ where: { id: existing.id } })
   } catch (error) {
@@ -134,6 +137,8 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
 
     throw error
   }
+
+  await deleteUnreferencedMediaFiles(mediaUrls)
 
   return new NextResponse(null, { status: 204 })
 }
