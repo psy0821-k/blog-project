@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import AdminGuard from '@/components/common/AdminGuard'
 import DeletePostButton from '@/components/features/post-form/DeletePostButton'
+import { formatKoreanDate } from '@/lib/format-date'
 import {
   getPublishedPostBySlug,
   getPublishedProjectDevLogs,
@@ -90,7 +91,7 @@ const ProjectDetailPage = async ({ params }: ProjectDetailPageProps) => {
                     dateTime={devLog.createdAt.toISOString()}
                     className="shrink-0 text-sm text-gray-500"
                   >
-                    {devLog.createdAt.toLocaleDateString('ko-KR')}
+                    {formatKoreanDate(devLog.createdAt)}
                   </time>
                 </Link>
               </li>

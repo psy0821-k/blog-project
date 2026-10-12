@@ -1,3 +1,4 @@
+import { formatKoreanDate } from '@/lib/format-date'
 import { PostStatus } from '@/lib/post-status'
 import Image from 'next/image'
 import TypingText from '@/components/common/TypingText'
@@ -50,7 +51,7 @@ const ProjectSummary = ({
             <TypingText text={title} />
           </h1>
           <span className="mt-2 text-sm text-gray-500">
-            <time dateTime={createdAt.toISOString()}>{createdAt.toLocaleDateString('ko-KR')}</time>
+            <time dateTime={createdAt.toISOString()}>{formatKoreanDate(createdAt)}</time>
             <span aria-hidden="true" className="mx-2">
               |
             </span>
@@ -64,7 +65,7 @@ const ProjectSummary = ({
                 <dt>최근 수정일</dt>
                 <dd>
                   <time dateTime={updatedAt.toISOString()}>
-                    {updatedAt.toLocaleDateString('ko-KR')}
+                    {formatKoreanDate(updatedAt)}
                   </time>
                 </dd>
               </>
