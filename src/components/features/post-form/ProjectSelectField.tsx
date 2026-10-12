@@ -1,6 +1,6 @@
 'use client'
 
-import { usePostList } from '@/hooks/use-post-list'
+import { useProjectOptions } from '@/hooks/use-project-options'
 
 interface ProjectSelectFieldProps {
   // 선택한 프로젝트의 id. 빈 문자열이면 연결하지 않는다.
@@ -8,10 +8,9 @@ interface ProjectSelectFieldProps {
   onChange: (projectId: string) => void
 }
 
-// 개발일지가 속할 프로젝트를 고른다. 발행된 프로젝트만 목록에 나타난다.
+// 개발일지가 속할 프로젝트를 고른다. 임시저장 프로젝트도 함께 나타난다.
 const ProjectSelectField = ({ value, onChange }: ProjectSelectFieldProps) => {
-  const { data } = usePostList('projects', { pageSize: 50 })
-  const projects = data?.data ?? []
+  const { data: projects = [] } = useProjectOptions()
 
   return (
     <div className="flex flex-col gap-2">
@@ -27,7 +26,7 @@ const ProjectSelectField = ({ value, onChange }: ProjectSelectFieldProps) => {
         <option value="">연결하지 않음</option>
         {projects.map((project) => (
           <option key={project.id} value={project.id}>
-            {project.title}
+            {project.published ? project.title : `${project.title} (임시저장)`}
           </option>
         ))}
       </select>
