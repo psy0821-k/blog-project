@@ -10,7 +10,6 @@ interface ListPageHeaderProps {
   writeHref: string
 }
 
-// 목록 페이지 상단(제목·설명·글쓰기·임시저장 토글·검색창). 좌우 여백은 .content 기준(px-4 md:px-0).
 export const ListPageHeader = ({ title, description, writeHref }: ListPageHeaderProps) => {
   return (
     <div className="px-4 md:px-0">
