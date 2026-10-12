@@ -11,6 +11,7 @@ import { inferMediaType } from '@/lib/media'
 import { getPublishedPostBySlug, incrementPostViewCount } from '@/lib/post-detail'
 import { getNextDevLogNumber } from '@/lib/post-number'
 import { updateDevLogSchema } from '@/lib/post-schema'
+import { validateProjectForDevLog } from '@/lib/project-relation'
 import { isRecordNotFoundError, prisma } from '@/lib/prisma'
 
 interface RouteParams {
@@ -63,6 +64,12 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
 
   if (invalidCategory) {
     return invalidCategory
+  }
+
+  const invalidProject = await validateProjectForDevLog(parsed.data.projectId)
+
+  if (invalidProject) {
+    return invalidProject
   }
 
   const { mediaUrls, ...postData } = parsed.data

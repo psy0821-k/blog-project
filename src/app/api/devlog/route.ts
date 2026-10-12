@@ -10,6 +10,7 @@ import {
 } from '@/lib/api-response'
 import { getNextDevLogNumber } from '@/lib/post-number'
 import { createDevLogSchema } from '@/lib/post-schema'
+import { validateProjectForDevLog } from '@/lib/project-relation'
 import { isUniqueConstraintError, prisma } from '@/lib/prisma'
 import { generateSlug } from '@/lib/slug'
 import { inferMediaType } from '@/lib/media'
@@ -54,7 +55,14 @@ export async function POST(request: NextRequest) {
     return validationErrorResponse(parsed.error)
   }
 
-  const { slug, title, content, metaTitle, metaDescription, published, mediaUrls } = parsed.data
+  const { slug, projectId, title, content, metaTitle, metaDescription, published, mediaUrls } =
+    parsed.data
+
+  const invalidProject = await validateProjectForDevLog(projectId)
+
+  if (invalidProject) {
+    return invalidProject
+  }
 
   let devLog
 
@@ -65,6 +73,7 @@ export async function POST(request: NextRequest) {
           type: 'DEV_LOG',
           title,
           slug: slug ?? generateSlug(title),
+          projectId,
           content,
           metaTitle,
           metaDescription,
