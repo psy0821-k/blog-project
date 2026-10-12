@@ -1,5 +1,6 @@
 import AdminGuard from '@/components/common/AdminGuard'
 import DeletePostButton from '@/components/features/post-form/DeletePostButton'
+import { formatKoreanDate } from '@/lib/format-date'
 import { optimizePostHtml } from '@/lib/optimize-post-html'
 import {
   getPublishedPostBySlug,
@@ -64,7 +65,7 @@ const DevLogDetailPage = async ({ params }: DevLogDetailPageProps) => {
           </AdminGuard>
           <p className="mt-2 text-sm text-gray-500">
             <time dateTime={devLog.createdAt.toISOString()}>
-              {devLog.createdAt.toLocaleDateString('ko-KR')}
+              {formatKoreanDate(devLog.createdAt)}
             </time>
             <span aria-hidden="true"> · </span>
             조회 {devLog.viewCount}
