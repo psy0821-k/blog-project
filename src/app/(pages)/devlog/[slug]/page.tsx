@@ -1,7 +1,11 @@
 import AdminGuard from '@/components/common/AdminGuard'
 import DeletePostButton from '@/components/features/post-form/DeletePostButton'
 import { optimizePostHtml } from '@/lib/optimize-post-html'
-import { getPublishedPostBySlug, incrementPostViewCount } from '@/lib/post-detail'
+import {
+  getPublishedPostBySlug,
+  getPublishedProjectLink,
+  incrementPostViewCount,
+} from '@/lib/post-detail'
 import { sanitizePostHtml } from '@/lib/sanitize-post-html'
 import { decodeSlugParam } from '@/lib/slug'
 import { Metadata } from 'next'
@@ -44,6 +48,8 @@ const DevLogDetailPage = async ({ params }: DevLogDetailPageProps) => {
   // 조회수는 렌더링과 무관하므로 기다리지 않는다. 실패해도 페이지는 보여준다.
   void incrementPostViewCount(devLog.id).catch(() => undefined)
 
+  const project = await getPublishedProjectLink(devLog.projectId)
+
   // 저장된 HTML은 렌더링 직전에 1회 sanitize한 뒤 이미지 srcset을 붙인다.
   const contentHtml = optimizePostHtml(sanitizePostHtml(devLog.content))
 
@@ -63,6 +69,14 @@ const DevLogDetailPage = async ({ params }: DevLogDetailPageProps) => {
             <span aria-hidden="true"> · </span>
             조회 {devLog.viewCount}
           </p>
+          {project && (
+            <p className="mt-2 text-sm">
+              <span className="text-gray-500">프로젝트 </span>
+              <Link href={`/projects/${encodeURIComponent(project.slug)}`} className="underline">
+                {project.title}
+              </Link>
+            </p>
+          )}
         </header>
 
         <div dangerouslySetInnerHTML={{ __html: contentHtml }} />
