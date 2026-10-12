@@ -36,6 +36,7 @@ export default function NotFound() {
             alt=""
             width={568}
             height={472}
+            style={{ width: '100%', height: 'auto' }}
             aria-hidden
             priority
           />

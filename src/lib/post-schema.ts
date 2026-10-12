@@ -9,7 +9,7 @@ export const slugSchema = z
   .max(100)
   .regex(/^[\p{L}\p{N}]+(?:-[\p{L}\p{N}]+)*$/u)
 
-export const postStatusSchema = z.enum(['IN_PROGRESS', 'COMPLETED'])
+export const postStatusSchema = z.enum(['IN_PROGRESS', 'COMPLETED', 'UP_COMING'])
 
 // 사용한 기술 등 글에 붙이는 태그 이름 목록. 중복·대소문자 차이는 서버가 slug 기준으로 정리한다.
 export const tagNamesSchema = z.array(z.string().trim().min(1).max(30)).max(20)

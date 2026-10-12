@@ -31,6 +31,8 @@ enum PostStatus {
   IN_PROGRESS
   /// 완료
   COMPLETED
+  /// 예정
+  UP_COMING
 }
 
 /// 미디어 파일 종류. URL만으로는 이미지/동영상을 안정적으로 구분할 수 없어(확장자 없는 CDN URL 등)
