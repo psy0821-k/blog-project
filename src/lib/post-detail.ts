@@ -16,6 +16,31 @@ export async function getPublishedPostBySlug(type: PostType, slug: string) {
   })
 }
 
+/**
+ * 개발일지가 속한 프로젝트의 링크 정보를 조회한다. 발행된 프로젝트만 반환한다.
+ */
+export async function getPublishedProjectLink(projectId: string | null) {
+  if (!projectId) {
+    return null
+  }
+
+  return prisma.post.findFirst({
+    where: { id: projectId, type: 'PROJECT', published: true },
+    select: { slug: true, title: true },
+  })
+}
+
+/**
+ * 프로젝트에 연결된 발행된 개발일지를 번호 내림차순으로 조회한다.
+ */
+export async function getPublishedProjectDevLogs(projectId: string) {
+  return prisma.post.findMany({
+    where: { projectId, type: 'DEV_LOG', published: true },
+    select: { slug: true, title: true, devNumber: true, createdAt: true },
+    orderBy: [{ devNumber: { sort: 'desc', nulls: 'last' } }, { createdAt: 'desc' }],
+  })
+}
+
 export async function getPostForEdit(type: PostType, slug: string) {
   if (!(await requireAdminSession())) {
     return null

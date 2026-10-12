@@ -4,7 +4,11 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import AdminGuard from '@/components/common/AdminGuard'
 import DeletePostButton from '@/components/features/post-form/DeletePostButton'
-import { getPublishedPostBySlug, incrementPostViewCount } from '@/lib/post-detail'
+import {
+  getPublishedPostBySlug,
+  getPublishedProjectDevLogs,
+  incrementPostViewCount,
+} from '@/lib/post-detail'
 import { sanitizePostHtml } from '@/lib/sanitize-post-html'
 import { optimizePostHtml } from '@/lib/optimize-post-html'
 import { decodeSlugParam } from '@/lib/slug'
@@ -43,6 +47,7 @@ const ProjectDetailPage = async ({ params }: ProjectDetailPageProps) => {
   }
 
   void incrementPostViewCount(project.id).catch(() => undefined)
+  const devLogs = await getPublishedProjectDevLogs(project.id)
   const contentHtml = optimizePostHtml(sanitizePostHtml(project.content))
 
   return (
@@ -66,6 +71,33 @@ const ProjectDetailPage = async ({ params }: ProjectDetailPageProps) => {
       </header>
 
       <div dangerouslySetInnerHTML={{ __html: contentHtml }} />
+
+      {devLogs.length > 0 && (
+        <section aria-labelledby="project-devlogs-heading" className="mt-12">
+          <h2 id="project-devlogs-heading">개발일지</h2>
+          <ul className="mt-4 divide-y border-y">
+            {devLogs.map((devLog) => (
+              <li key={devLog.slug}>
+                <Link
+                  href={`/devlog/${encodeURIComponent(devLog.slug)}`}
+                  className="flex items-center gap-4 px-2 py-3 hover:bg-gray-100"
+                >
+                  <span className="w-8 shrink-0 text-center text-sm text-gray-500">
+                    {devLog.devNumber ?? '-'}
+                  </span>
+                  <span className="min-w-0 flex-1 truncate">{devLog.title}</span>
+                  <time
+                    dateTime={devLog.createdAt.toISOString()}
+                    className="shrink-0 text-sm text-gray-500"
+                  >
+                    {devLog.createdAt.toLocaleDateString('ko-KR')}
+                  </time>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
     </article>
   )
 }
