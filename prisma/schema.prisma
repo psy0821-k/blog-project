@@ -89,6 +89,8 @@ model Post {
   // 임시 저장 시에 사용
   published       Boolean @default(false)
   viewCount       Int     @default(0)
+  // DEV_LOG 글의 발행 순서 고정 번호. 처음 발행할 때 부여하며, 임시저장 글과 다른 종류의 글은 null이다.
+  devNumber       Int?
   metaTitle       String?
   metaDescription String?
 
@@ -108,6 +110,7 @@ model Post {
   media    Media[]
   postTags PostTag[]
 
+  @@unique([type, devNumber])
   @@index([type, published])
   @@index([projectId])
   @@index([categoryId])
