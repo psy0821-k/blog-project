@@ -18,7 +18,7 @@ const NoResult = ({ keyword }: NoResultProps) => {
             loading="eager"
             className="h-auto w-50"
           />
-          <h1 className="mt-8">&apos;{keyword}&apos; 검색 결과가 없습니다</h1>
+          <h2 className="mt-8">&apos;{keyword}&apos; 검색 결과가 없습니다</h2>
           <p className="mt-2 text-lg">다시 한번 확인해주세요</p>
         </>
       ) : (
@@ -31,7 +31,7 @@ const NoResult = ({ keyword }: NoResultProps) => {
             loading="eager"
             className="h-auto w-auto"
           />
-          <h1 className="mt-8">작성된 글이 없습니다</h1>
+          <h2 className="mt-8">작성된 글이 없습니다</h2>
           <p className="mt-2 text-lg">조금만 기다려주세요 컨텐츠 준비 중 입니다</p>
         </>
       )}
