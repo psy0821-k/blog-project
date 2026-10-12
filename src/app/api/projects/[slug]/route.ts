@@ -4,6 +4,7 @@ import { forbiddenResponse, invalidJsonResponse, notFoundResponse, validationErr
 import { validateCategoryForType } from '@/lib/category'
 import { inferMediaType } from '@/lib/media'
 import { getPublishedPostBySlug } from '@/lib/post-detail'
+import { collectPostMediaUrls, deleteUnreferencedMediaFiles } from '@/lib/post-media-cleanup'
 import { updatePostSchema } from '@/lib/post-schema'
 import { isRecordNotFoundError, prisma } from '@/lib/prisma'
 import { replacePostTags } from '@/lib/tag'
@@ -114,6 +115,8 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     return notFoundResponse()
   }
 
+  const mediaUrls = await collectPostMediaUrls(existing)
+
   try {
     await prisma.post.delete({ where: { id: existing.id } })
   } catch (error) {
@@ -124,6 +127,8 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
 
     throw error
   }
+
+  await deleteUnreferencedMediaFiles(mediaUrls)
 
   return new NextResponse(null, { status: 204 })
 }
