@@ -3,6 +3,8 @@ import { PostStatus } from '@/lib/post-status'
 import Image from 'next/image'
 import TypingText from '@/components/common/TypingText'
 import { isVideoUrl } from '@/lib/media-validation'
+import StatusBadge from '@/components/common/StatusBadge'
+import TagList from '@/components/common/TagList'
 import SummaryVideo from './SummaryVideo'
 
 const COVER_CLASS =
@@ -79,7 +81,9 @@ const ProjectSummary = ({
             {technologies.length > 0 && (
               <>
                 <dt>기술 스택</dt>
-                <dd>{technologies.join(', ')}</dd>
+                <dd>
+                  <TagList tags={technologies} />
+                </dd>
               </>
             )}
             {description && (
@@ -90,9 +94,7 @@ const ProjectSummary = ({
             )}
           </dl>
           <hr className="my-4" />
-          <span className="w-20 aspect-square rounded-full bg-green-600 text-white text-[12px] font-bold flex items-center justify-center text-center leading-tight whitespace-pre-line hover:animate-[spin_4s_linear_infinite]">
-            {status.replaceAll('_', '\n')}
-          </span>
+          <StatusBadge status={status} variant="circle" />
         </div>
       </div>
     </section>

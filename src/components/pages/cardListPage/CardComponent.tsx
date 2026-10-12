@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { formatKoreanDate } from '@/lib/format-date'
 import { isVideoUrl } from '@/lib/media-validation'
 import type { PostStatus } from '@/lib/post-status'
+import StatusBadge from '@/components/common/StatusBadge'
 import CardVideo from './CardVideo'
 
 interface CardProps {
@@ -44,7 +45,9 @@ export const CardComponent = ({
         <h3 className="my-2 break-words text-base font-medium min-[640px]:text-lg min-[768px]:text-xl min-[1440px]:text-2xl">
           {title}
         </h3>
-        <p className="text-xs min-[640px]:text-sm min-[1440px]:text-base">{status}</p>
+        <p>
+          <StatusBadge status={status} />
+        </p>
         <p className="text-xs text-gray-500 min-[1440px]:text-sm">
           {formatKoreanDate(new Date(createdAt))} | view {viewCount}
         </p>
