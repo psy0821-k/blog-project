@@ -94,9 +94,7 @@ const PostForm = ({ type, heading, post }: PostFormProps) => {
           // 임시저장 상태로 저장했다면 발행 글만 보이는 상세 페이지 대신 임시저장 목록으로 돌아간다.
           onSuccess: () =>
             router.push(
-              published
-                ? `/${type}/${encodeURIComponent(post.slug)}`
-                : `/${type}?draft=true`,
+              published ? `/${type}/${encodeURIComponent(post.slug)}` : `/${type}?draft=true`,
             ),
         },
       )
@@ -114,7 +112,9 @@ const PostForm = ({ type, heading, post }: PostFormProps) => {
         metaTitle: metaTitle.trim() || undefined,
         metaDescription: metaDescription.trim() || undefined,
       },
-      { onSuccess: () => router.push(`/${type}`) },
+      {
+        onSuccess: () => router.push(published ? `/${type}` : `/${type}?draft=true`),
+      },
     )
   }
 
