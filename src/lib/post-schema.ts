@@ -51,6 +51,8 @@ export const updatePostSchema = z.object({
 export const updateDevLogSchema = z.object({
   // 서브메뉴(카테고리) 변경. null은 미분류로 되돌린다.
   categoryId: z.string().uuid().nullable().optional(),
+  // 속한 프로젝트 변경. null은 연결을 해제한다. PROJECT 글의 id여야 한다.
+  projectId: z.uuid().nullable().optional(),
   title: z.string().trim().min(1).optional(),
   content: z.string().optional(),
   metaTitle: z.string().trim().optional(),
@@ -75,6 +77,8 @@ export const updateCategorySchema = z.object({
 
 export const createDevLogSchema = z.object({
   slug: slugSchema.optional(),
+  // 이 글이 속한 프로젝트. PROJECT 글의 id여야 한다. DEV_LOG에서만 받는다.
+  projectId: z.uuid().optional(),
   title: z.string().trim().min(1),
   content: z.string(),
   metaTitle: z.string().trim().optional(),
