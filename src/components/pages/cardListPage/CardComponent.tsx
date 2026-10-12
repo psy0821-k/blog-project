@@ -39,9 +39,13 @@ export const CardComponent = ({
             ></Image>
           )}
         </div>
-        <h3 className="text-[24px] font-medium my-2">{title}</h3>
-        <p>{status}</p>
-        <p className="text-gray-500 text-[12px]">
+        {/* 글자 크기는 카드 폭에 맞춘다. 카드 폭은 2열(~639px) → 3열(640px~) → 사이드바가 생기는 1440px부터 커진다.
+            sm:/md: 같은 표준 변형은 min-[1440px]: 변형보다 나중에 선언되어 덮어쓰므로 min-[Npx]: 변형으로 통일한다. */}
+        <h3 className="my-2 break-words text-base font-medium min-[640px]:text-lg min-[768px]:text-xl min-[1440px]:text-2xl">
+          {title}
+        </h3>
+        <p className="text-xs min-[640px]:text-sm min-[1440px]:text-base">{status}</p>
+        <p className="text-xs text-gray-500 min-[1440px]:text-sm">
           {formatKoreanDate(new Date(createdAt))} | view {viewCount}
         </p>
       </Link>
