@@ -1,4 +1,4 @@
-import { jwtVerify } from 'jose'
+import { jwtVerify, SignJWT } from 'jose'
 import type { NextRequest } from 'next/server'
 import { auth } from '@/auth'
 
@@ -34,6 +34,19 @@ export function getAdminTokenSecret() {
   }
 
   return new TextEncoder().encode(secret)
+}
+
+// 관리자(ERP) 앱용 API 토큰의 유효 기간. 만료되면 관리자 앱이 로그인 리디렉션(/admin-login)으로 다시 발급받는다.
+export const ADMIN_TOKEN_EXPIRES_IN = '1h'
+
+/** ADMIN 사용자 id로 관리자 앱용 JWT(HS256)를 발급한다. */
+export async function issueAdminToken(subject: string): Promise<string> {
+  return new SignJWT({ role: 'ADMIN' })
+    .setProtectedHeader({ alg: 'HS256' })
+    .setSubject(subject)
+    .setIssuedAt()
+    .setExpirationTime(ADMIN_TOKEN_EXPIRES_IN)
+    .sign(getAdminTokenSecret())
 }
 
 /**
