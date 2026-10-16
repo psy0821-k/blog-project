@@ -49,3 +49,21 @@ export function sanitizeInternalPath(path: string | null | undefined): string {
 
   return path
 }
+
+/**
+ * 로그인 후 이동할 내부 경로를 정한다.
+ * redirectTo(우리가 넘긴 값)를 우선하고, 없으면 Auth.js가 로그인 실패 시 붙이는 callbackUrl(절대 주소)에서
+ * 경로와 쿼리만 취한다. 어느 쪽이든 이 사이트 안의 경로만 돌려주므로 외부로 나갈 수 없다.
+ */
+export function resolveLoginDestination(
+  redirectTo: string | null | undefined,
+  callbackUrl: string | null | undefined,
+): string {
+  if (redirectTo) {
+    return sanitizeInternalPath(redirectTo)
+  }
+
+  const callback = callbackUrl ? parseHttpUrl(callbackUrl) : null
+
+  return callback ? sanitizeInternalPath(`${callback.pathname}${callback.search}`) : '/'
+}
