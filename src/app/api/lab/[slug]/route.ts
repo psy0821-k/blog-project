@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { requireAdminSession } from '@/lib/api-auth'
+import { requireAdmin } from '@/lib/api-auth'
 import { forbiddenResponse, invalidJsonResponse, notFoundResponse, validationErrorResponse } from '@/lib/api-response'
 import { validateCategoryForType } from '@/lib/category'
 import { inferMediaType } from '@/lib/media'
@@ -26,9 +26,9 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
 }
 
 export async function PATCH(request: NextRequest, { params }: RouteParams) {
-  const session = await requireAdminSession()
+  const admin = await requireAdmin(request)
 
-  if (!session) {
+  if (!admin) {
     return forbiddenResponse()
   }
 
@@ -100,10 +100,10 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
   }
 }
 
-export async function DELETE(_request: NextRequest, { params }: RouteParams) {
-  const session = await requireAdminSession()
+export async function DELETE(request: NextRequest, { params }: RouteParams) {
+  const admin = await requireAdmin(request)
 
-  if (!session) {
+  if (!admin) {
     return forbiddenResponse()
   }
 
