@@ -1,10 +1,6 @@
-import { SignJWT } from 'jose'
 import { NextResponse } from 'next/server'
 import { forbiddenResponse } from '@/lib/api-response'
-import { getAdminTokenSecret, requireAdminSession } from '@/lib/api-auth'
-
-// 관리자(ERP) 앱용 API 토큰의 유효 기간. 만료되면 관리자 앱에서 이 엔드포인트를 다시 호출해 재발급받는다.
-const ADMIN_TOKEN_EXPIRES_IN = '1h'
+import { ADMIN_TOKEN_EXPIRES_IN, issueAdminToken, requireAdminSession } from '@/lib/api-auth'
 
 /**
  * 블로그(Next.js)에 Google OAuth로 로그인된 ADMIN 세션(쿠키)을 확인한 뒤,
@@ -23,12 +19,7 @@ export async function GET() {
     return forbiddenResponse()
   }
 
-  const token = await new SignJWT({ role: 'ADMIN' })
-    .setProtectedHeader({ alg: 'HS256' })
-    .setSubject(session.user.id)
-    .setIssuedAt()
-    .setExpirationTime(ADMIN_TOKEN_EXPIRES_IN)
-    .sign(getAdminTokenSecret())
+  const token = await issueAdminToken(session.user.id)
 
   return NextResponse.json({ token, expiresIn: ADMIN_TOKEN_EXPIRES_IN })
 }
