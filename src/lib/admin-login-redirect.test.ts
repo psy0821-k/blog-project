@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest'
-import { buildTokenRedirectUrl, resolveAdminAppRedirect, sanitizeInternalPath } from './admin-login-redirect'
+import {
+  buildTokenRedirectUrl,
+  resolveAdminAppRedirect,
+  resolveLoginDestination,
+  sanitizeInternalPath,
+} from './admin-login-redirect'
 
 const ADMIN_APP_ORIGIN = 'http://localhost:5173'
 
@@ -74,5 +79,32 @@ describe('sanitizeInternalPath', () => {
     expect(sanitizeInternalPath(undefined)).toBe('/')
     expect(sanitizeInternalPath(null)).toBe('/')
     expect(sanitizeInternalPath('')).toBe('/')
+  })
+})
+
+describe('resolveLoginDestination', () => {
+  it('redirectTo가 내부 경로면 그대로 쓴다', () => {
+    expect(resolveLoginDestination('/admin-login?redirect=abc', undefined)).toBe('/admin-login?redirect=abc')
+  })
+
+  it('redirectTo가 없으면 callbackUrl(Auth.js가 실패 시 붙임)의 경로와 쿼리를 쓴다', () => {
+    expect(
+      resolveLoginDestination(undefined, 'http://localhost:3000/admin-login?redirect=http%3A%2F%2Flocalhost%3A5173%2Fauth%2Fcallback'),
+    ).toBe('/admin-login?redirect=http%3A%2F%2Flocalhost%3A5173%2Fauth%2Fcallback')
+  })
+
+  it('callbackUrl이 다른 사이트 주소여도 경로만 취해 이 사이트 안에 머문다', () => {
+    expect(resolveLoginDestination(undefined, 'https://evil.example/steal?x=1')).toBe('/steal?x=1')
+  })
+
+  it('redirectTo가 있으면 callbackUrl보다 우선한다', () => {
+    expect(resolveLoginDestination('/a', 'http://localhost:3000/b')).toBe('/a')
+  })
+
+  it('둘 다 없거나 올바르지 않으면 "/"이다', () => {
+    expect(resolveLoginDestination(undefined, undefined)).toBe('/')
+    expect(resolveLoginDestination('//evil.example', undefined)).toBe('/')
+    expect(resolveLoginDestination(undefined, 'not a url')).toBe('/')
+    expect(resolveLoginDestination(undefined, 'javascript:alert(1)')).toBe('/')
   })
 })
