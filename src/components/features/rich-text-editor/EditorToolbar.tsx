@@ -17,6 +17,14 @@ const EditorToolbar = ({ id }: EditorToolbarProps) => (
       </select>
     </span>
     <span className="ql-formats">
+      <select className="ql-size" defaultValue="" aria-label="글씨 크기">
+        <option value="small">작게</option>
+        <option value="">보통</option>
+        <option value="large">크게</option>
+        <option value="huge">아주 크게</option>
+      </select>
+    </span>
+    <span className="ql-formats">
       <button type="button" className="ql-bold" aria-label="굵게" />
       <button type="button" className="ql-italic" aria-label="기울임" />
       <button type="button" className="ql-underline" aria-label="밑줄" />

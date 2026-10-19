@@ -8,13 +8,7 @@ interface StatusBadgeProps {
   className?: string
 }
 
-// 상태별 색: 완료 파랑, 예정 빨강, 진행중은 기존 색(원형 초록, 텍스트는 기본색)
-const TEXT_COLOR_CLASS: Record<PostStatus, string> = {
-  IN_PROGRESS: '',
-  COMPLETED: 'text-blue-600',
-  UP_COMING: 'text-red-600',
-}
-
+// 원형 배지만 상태별 배경색을 쓴다. 텍스트형(목록 카드)은 기본 글자색.
 const CIRCLE_COLOR_CLASS: Record<PostStatus, string> = {
   IN_PROGRESS: 'bg-green-600',
   COMPLETED: 'bg-blue-600',
@@ -32,7 +26,7 @@ const VARIANT_CLASS: Record<StatusBadgeVariant, string> = {
 const StatusBadge = ({ status, variant = 'text', className = '' }: StatusBadgeProps) => (
   <span
     className={`${VARIANT_CLASS[variant]} ${
-      variant === 'circle' ? CIRCLE_COLOR_CLASS[status] : TEXT_COLOR_CLASS[status]
+      variant === 'circle' ? CIRCLE_COLOR_CLASS[status] : ''
     } ${className}`.trim()}
   >
     {variant === 'circle' ? formatStatusLines(status) : status}

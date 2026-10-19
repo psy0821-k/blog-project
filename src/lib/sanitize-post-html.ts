@@ -9,6 +9,8 @@ const IMAGE_SIZE_CLASSES = ['img-sm', 'img-md', 'img-lg']
 const IMAGE_GAP_CLASSES = ['img-gap-sm', 'img-gap-md', 'img-gap-lg']
 // Quill 정렬 클래스(왼쪽 정렬은 클래스가 붙지 않는다).
 const ALIGN_CLASSES = ['ql-align-center', 'ql-align-right']
+// Quill 글씨 크기 클래스(보통 크기는 클래스가 붙지 않는다).
+const SIZE_CLASSES = ['ql-size-small', 'ql-size-large', 'ql-size-huge']
 
 const OPTIONS: sanitizeHtml.IOptions = {
   allowedTags: [
@@ -31,6 +33,7 @@ const OPTIONS: sanitizeHtml.IOptions = {
     h3: ['class'],
     pre: ['class'],
     li: ['data-list', 'class'],
+    span: ['class'],
   },
   allowedClasses: {
     img: IMAGE_SIZE_CLASSES,
@@ -39,6 +42,7 @@ const OPTIONS: sanitizeHtml.IOptions = {
     h2: ALIGN_CLASSES,
     h3: ALIGN_CLASSES,
     li: ALIGN_CLASSES,
+    span: SIZE_CLASSES,
     pre: ['ql-syntax'],
     iframe: ['ql-video'],
   },
