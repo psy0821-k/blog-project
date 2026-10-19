@@ -81,7 +81,7 @@ const DevLogDetailPage = async ({ params }: DevLogDetailPageProps) => {
         </header>
         <hr className="border-t border-gray-300 my-4.5 sm:my-6 md:my-9 lg:my-12" />
 
-        <div dangerouslySetInnerHTML={{ __html: contentHtml }} />
+        <div className="rich-text-content" dangerouslySetInnerHTML={{ __html: contentHtml }} />
       </article>
     </main>
   )

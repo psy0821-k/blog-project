@@ -112,3 +112,14 @@
 .img-gap-lg.ql-align-right {
   justify-content: flex-end;
 }
+
+/* Enter 한 번에 한 줄 띄우기: 문단 사이에 한 줄 높이의 간격을 둔다(에디터/상세 공통). */
+.rich-text-content p,
+.rich-text-editor .ql-editor p {
+  margin-bottom: 1lh;
+}
+
+.rich-text-content p:last-child,
+.rich-text-editor .ql-editor p:last-child {
+  margin-bottom: 0;
+}
