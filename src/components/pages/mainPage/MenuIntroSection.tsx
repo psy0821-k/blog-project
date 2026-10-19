@@ -13,7 +13,8 @@ const MenuIntroSection = () => {
 
   useGSAP(
     () => {
-      // 섹션 상단이 화면 높이 20% 지점에 닿으면 메뉴가 하나씩 떠오름 (초기 숨김은 MenuIntro.css)
+      // 섹션 상단이 화면 높이 80% 지점에 닿으면 메뉴가 하나씩 떠오름 (초기 숨김은 MenuIntro.css)
+      // clamp: 페이지가 짧아 시작 지점이 최대 스크롤을 넘어도 반드시 발동하도록 보정
       gsap.to('.menu-intro-item', {
         opacity: 1,
         y: 0,
@@ -22,7 +23,7 @@ const MenuIntroSection = () => {
         stagger: 0.2,
         scrollTrigger: {
           trigger: sectionRef.current,
-          start: 'top 20%',
+          start: 'clamp(top 80%)',
           toggleActions: 'play none none none',
         },
       })
