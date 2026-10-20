@@ -34,6 +34,10 @@ const OPTIONS: sanitizeHtml.IOptions = {
     pre: ['class'],
     li: ['data-list', 'class'],
     span: ['class'],
+    // 굵게/기울임/밑줄과 함께 쓰면 Quill이 크기 클래스를 span이 아닌 이 태그에 붙인다.
+    strong: ['class'],
+    em: ['class'],
+    u: ['class'],
   },
   allowedClasses: {
     img: IMAGE_SIZE_CLASSES,
@@ -43,6 +47,9 @@ const OPTIONS: sanitizeHtml.IOptions = {
     h3: ALIGN_CLASSES,
     li: ALIGN_CLASSES,
     span: SIZE_CLASSES,
+    strong: SIZE_CLASSES,
+    em: SIZE_CLASSES,
+    u: SIZE_CLASSES,
     pre: ['ql-syntax'],
     iframe: ['ql-video'],
   },

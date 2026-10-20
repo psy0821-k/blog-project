@@ -77,6 +77,15 @@ describe('sanitizePostHtml', () => {
       )
     })
 
+    it('굵게·기울임·밑줄 안의 글씨 크기 클래스를 유지한다', () => {
+      expect(sanitizePostHtml('<strong class="ql-size-huge">제목</strong>')).toBe(
+        '<strong class="ql-size-huge">제목</strong>',
+      )
+      expect(sanitizePostHtml('<em class="ql-size-large evil">글</em>')).toBe(
+        '<em class="ql-size-large">글</em>',
+      )
+    })
+
     it('영상 태그는 https 주소만 허용한다', () => {
       const html = sanitizePostHtml(
         '<video src="https://ik.imagekit.io/a.mp4" controls></video><video src="http://x.com/b.mp4"></video>',
