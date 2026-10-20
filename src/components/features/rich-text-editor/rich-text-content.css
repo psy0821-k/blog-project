@@ -92,6 +92,11 @@
   content: '아주 크게';
 }
 
+/* 에디터가 빈 줄을 <p></p>로 저장해 높이가 0이 되므로 한 줄 높이를 보장한다. */
+.rich-text-content p:empty {
+  min-height: 1lh;
+}
+
 .ql-align-center {
   text-align: center;
 }
